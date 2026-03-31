@@ -18,14 +18,16 @@
 > 请使用 `methodalgo-market-intel-explorer` 技能，为我生成一份今日加密市场综述。
 > 1. 调用 `signals market-today` 获取恐慌贪婪指数和山寨季指标。
 > 2. 调用 `signals etf-tracker` 获取最新的 ETF 资金流向。
-> 3. 调用 `news --type article --limit 5` 获取今日最重要的 5 条深度分析。
+> 3. 调用 `news --type article --limit 50` 获取今日 50 条新闻。
+> 4. 调用 `news --type breaking --limit 50` 获取最新的重要的 50 突发要闻。
+
 > 请结合以上数据，用简洁的中文分析当前市场情绪和潜在风险。
 
 ### 2. 特定币种深度扫描 (如 SOL)
 **Prompt**:
 > 我需要对 SOL 进行深度扫描：
 > 1. 搜索关于 SOL 的最新 10 条新闻：`news --type article --search 'SOL' --limit 10`。
-> 2. 检查是否有针对 SOL 的 MTF 突破信号：`signals breakout-mtf --limit 50` 并过滤出 SOL 相关的项。
+> 2. 检查是否有针对 SOL 的 MTF 突破信号：`signals breakout-mtf --limit 200` 并过滤出 SOL 相关的项。
 > 3. 获取一张 SOLUSDT.P 的 1 小时图表快照：`snapshot SOLUSDT.P 60 --url`。
 > 请整合以上信息，判断 SOL 当前的短期走势。
 

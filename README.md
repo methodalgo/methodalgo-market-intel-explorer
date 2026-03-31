@@ -89,15 +89,18 @@ methodalgo snapshot SOLUSDT.P 60 --url --json
 | :--- | :--- |
 | **今日热点** | `methodalgo news --type article --limit 5 --json` |
 | **监控强平** | `methodalgo signals liquidation --limit 10 --json` |
+| **中线突破** | `methodalgo signals breakout-mtf --limit 10 --json` |
+| **趋势反转** | `methodalgo signals exhaustion-buyer --limit 5 --json` |
+| **抄底黄金坑** | `methodalgo signals golden-pit-mtf --limit 5 --json` |
 | **获取快照** | `methodalgo snapshot BTCUSDT.P 60 --url --json` |
 | **查看 ETF** | `methodalgo signals etf-tracker --limit 1 --json` |
 | **代币解锁** | `methodalgo signals token-unlock --limit 10 --json` |
+| **情绪监测** | `methodalgo signals market-today --limit 1 --json` |
 
 ---
 
 ## ⚠️ 注意事项
-- 本技能默认优先返回中文（`zh`）内容。
-- `--limit` 参数可调节返回的数据条数，请根据上下文窗口大小合理设定。
+- `--limit` 参数可调节返回的数据条数，请根据上下文窗口大小合理设定。,避免过小获得不了全面数据,也避免过大占用大量上下文
 - 对于 `token-unlock` 频道，返回的 JSON 根部包含 `signals` 数组，与其他频道略有不同。
 
 ---

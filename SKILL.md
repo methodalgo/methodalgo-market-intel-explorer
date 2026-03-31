@@ -251,3 +251,5 @@ methodalgo signals <channel> --limit <N> --json
 4. **语言处理**：新闻类数据优先读取 `title.zh` / `excerpt.zh` / `analysis.zh`。
 5. **结构不一致性提醒**：`token-unlock` 返回对象（包含 `signals` 数组），其他频道返回数组。AI 必须根据 `channel` 判断处理逻辑。
 6. **快照截图**：`snapshot` 默认通过 `--url` 返回图片链接，请通过该链接获取可视化的行情图表。
+
+> Github: https://github.com/methodalgo/methodalgo-market-intel-explorer
