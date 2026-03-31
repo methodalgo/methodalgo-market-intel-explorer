@@ -62,17 +62,23 @@ Then point your AI agent (e.g. Claude, Cursor, Antigravity) to the cloned folder
 
 ## ⚙️ Part 2 — Installing the CLI (Required)
 
-This skill relies on the `methodalgo` CLI to fetch market data. **You must install it before using any skill commands.**
+This skill relies on the `methodalgo` CLI — an **open-source npm package** ([npmjs.com/package/methodalgo-cli](https://www.npmjs.com/package/methodalgo-cli)) — to fetch market data. **You must install it before using any skill commands.**
 
 ```bash
 npm install -g methodalgo-cli
 ```
 
-Verify the installation and configure your API key:
+**API Key Required**: CLI commands are authenticated with a Methodalgo API key.
+
+> 🔑 **Apply for an API key**: [https://account.methodalgo.com/account/api-keys](https://account.methodalgo.com/account/api-keys)
+
+Once you have your key, authenticate the CLI:
 ```bash
 methodalgo --version
-methodalgo login
+methodalgo login   # follow the prompts to enter your API key
 ```
+
+The key is stored locally on your machine and is only used to authenticate requests to Methodalgo's own API.
 
 ---
 

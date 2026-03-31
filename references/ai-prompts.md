@@ -35,10 +35,10 @@ This document provides a series of optimized prompt examples designed to help AI
 
 ### 3. Monitoring Large Liquidations and Sentiment Reversal
 **Prompt**:
-> Monitor market anomalies in real-time:
+> Analyze market anomalies for a given session:
 > 1. Fetch the latest 50 large liquidation records: `signals liquidation --limit 50`.
 > 2. Check for any `exhaustion-buyer` or `exhaustion-seller` reversal signals: `signals exhaustion-seller --limit 5`.
-> 3. If any large liquidations (over $1M) or strong reversal signals are found, alert me immediately and provide the corresponding chart snapshot links.
+>  3. If any large liquidations (over $1M) or strong reversal signals are found, include the corresponding chart snapshot links and summarize the key findings.
 
 ### 4. Token Unlock Alerts
 **Prompt**:

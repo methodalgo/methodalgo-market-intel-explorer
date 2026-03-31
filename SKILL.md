@@ -3,6 +3,14 @@ name: methodalgo-market-intel-explorer
 version: 1.0.0
 category: data-provider
 description: Fetches cryptocurrency news, chart snapshots, macroeconomic events, and trading signals. Use this skill when the user wants to check the latest crypto news, market snapshots, chart screenshots, trading signals, token unlocks, ETF flows, Fear & Greed indices, and other market data.
+credentials:
+  - name: METHODALGO_API_KEY
+    description: API key for the Methodalgo service. Obtain one at https://account.methodalgo.com/account/api-keys
+    required: true
+provenance:
+  cli: https://www.npmjs.com/package/methodalgo-cli
+  source: https://github.com/methodalgo/methodalgo-market-intel-explorer
+  registry: https://clawhub.ai/methodalgo/methodalgo-marketintel-explorer
 ---
 
 # Methodalgo Market Intel Explorer Skill
@@ -27,16 +35,20 @@ Then point your AI agent (e.g. Claude, Cursor, Antigravity) to the cloned folder
 
 ## Part 2 — Installing the CLI (Required)
 
-This skill relies on the `methodalgo` CLI to fetch market data. You must install it before using any skill commands.
+This skill relies on the `methodalgo` CLI, an **open-source npm package** ([npmjs.com/package/methodalgo-cli](https://www.npmjs.com/package/methodalgo-cli)), to fetch market data.
 
 ```bash
 npm install -g methodalgo-cli
 ```
 
-Verify the installation and log in with your API key:
+**API Key Required**: This skill requires a Methodalgo API key to authenticate CLI requests.
+- Apply for one at: **https://account.methodalgo.com/account/api-keys**
+- The key is stored locally on your machine after login; it is never transmitted outside of Methodalgo's own API.
+
+Verify the installation and authenticate:
 ```bash
 methodalgo --version
-methodalgo login
+methodalgo login   # follow the prompts to enter your API key
 ```
 
 ---
@@ -45,9 +57,9 @@ methodalgo login
 
 To execute tasks more accurately, it is recommended to refer to the following documents before handling complex queries:
 
-- **[Signal Channels Detailed Reference](file:///Users/justin/Documents/SynologyDrive/0Dev/skills/methodalgo-skills/methodalgo-market-intel-explorer/references/signal-channels.md)**: Detailed explanation of the trigger mechanisms, timeframes, and `details` field meanings for various signal channels (Breakout, Exhaustion, Golden Pit, etc.).
-- **[AI Prompts Guide](file:///Users/justin/Documents/SynologyDrive/0Dev/skills/methodalgo-skills/methodalgo-market-intel-explorer/references/ai-prompts.md)**: Provides prompt templates for scenarios such as "Daily Market Overview" and "Specific Coin Deep Scan".
-- **[Data Output Samples](file:///Users/justin/Documents/SynologyDrive/0Dev/skills/methodalgo-skills/methodalgo-market-intel-explorer/references/sample-output.md)**: Shows real JSON response structures for news, signals, and snapshot commands to facilitate parsing logic.
+- **[Signal Channels Detailed Reference](./references/signal-channels.md)**: Detailed explanation of the trigger mechanisms, timeframes, and `details` field meanings for various signal channels (Breakout, Exhaustion, Golden Pit, etc.).
+- **[AI Prompts Guide](./references/ai-prompts.md)**: Provides prompt templates for scenarios such as "Daily Market Overview" and "Specific Coin Deep Scan".
+- **[Data Output Samples](./references/sample-output.md)**: Shows real JSON response structures for news, signals, and snapshot commands to facilitate parsing logic.
 
 ---
 
