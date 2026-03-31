@@ -18,6 +18,16 @@ npm install -g methodalgo-cli
 
 ---
 
+## 📚 相关参考 (LLM 建议优先阅读)
+
+为了更精准地执行任务，建议在处理复杂查询前参考以下文档：
+
+- **[信号频道详细参考](file:///Users/justin/Documents/SynologyDrive/0Dev/skills/methodalgo-skills/methodalgo-market-intel-explorer/references/signal-channels.md)**: 详细说明了各信号频道（Breakout, Exhaustion, Golden Pit等）的触发机制、时间框架及 `details` 字段含义。
+- **[AI 提示词指南](file:///Users/justin/Documents/SynologyDrive/0Dev/skills/methodalgo-skills/methodalgo-market-intel-explorer/references/ai-prompts.md)**: 提供了针对“今日市场综述”及“特定币种扫描”等场景的提示词模板。
+- **[数据输出示例](file:///Users/justin/Documents/SynologyDrive/0Dev/skills/methodalgo-skills/methodalgo-market-intel-explorer/references/sample-output.md)**: 展示了新闻、信号及快照命令的真实 JSON 返回结构，便于编写解析逻辑。
+
+---
+
 ## 使用方法
 
 直接调用 `methodalgo` CLI，**必须加 `--json`** 获取结构化数据：
