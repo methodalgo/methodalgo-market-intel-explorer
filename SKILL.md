@@ -7,14 +7,37 @@ description: Fetches cryptocurrency news, chart snapshots, macroeconomic events,
 
 # Methodalgo Market Intel Explorer Skill
 
-## Prerequisites
+## Part 1 — Installing the Skill
 
-The `methodalgo` CLI must be installed globally:
+Choose one of the following methods to install this skill into your AI agent:
+
+### Option A — ClawHub (Recommended)
+```bash
+clawhub install methodalgo-marketintel-explorer
+```
+> 🔗 [https://clawhub.ai/methodalgo/methodalgo-marketintel-explorer](https://clawhub.ai/methodalgo/methodalgo-marketintel-explorer)
+
+### Option B — GitHub Clone
+```bash
+git clone https://github.com/methodalgo/methodalgo-market-intel-explorer.git
+```
+Then point your AI agent (e.g. Claude, Cursor, Antigravity) to the cloned folder and instruct it to read `SKILL.md` to activate.
+
+---
+
+## Part 2 — Installing the CLI (Required)
+
+This skill relies on the `methodalgo` CLI to fetch market data. You must install it before using any skill commands.
+
 ```bash
 npm install -g methodalgo-cli
 ```
 
-Verify with: `methodalgo --version`
+Verify the installation and log in with your API key:
+```bash
+methodalgo --version
+methodalgo login
+```
 
 ---
 
@@ -263,3 +286,4 @@ methodalgo signals <channel> --limit <N> --json
 6. **Snapshot Screenshots**: `snapshot` returns image links via `--url` by default. Please access the visualized market charts through these links.
 
 > Github: https://github.com/methodalgo/methodalgo-market-intel-explorer
+> ClawHub: https://clawhub.ai/methodalgo/methodalgo-marketintel-explorer

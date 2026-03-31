@@ -38,23 +38,39 @@ Note that the `token-unlock` channel returns an object (`{ signals: [...] }`), w
 
 ---
 
-## 🚀 Installation 
+## 🚀 Part 1 — Installing the Skill
 
-### 1. Prerequisites
-Ensure the `methodalgo` CLI is installed globally on your system:
+Choose one of the following methods to install this skill into your AI agent:
+
+### Option A — ClawHub (Recommended)
+
+```bash
+clawhub install methodalgo-marketintel-explorer
+```
+
+> 🔗 **Skill Page**: [https://clawhub.ai/methodalgo/methodalgo-marketintel-explorer](https://clawhub.ai/methodalgo/methodalgo-marketintel-explorer)
+
+### Option B — GitHub Clone
+
+```bash
+git clone https://github.com/methodalgo/methodalgo-market-intel-explorer.git
+```
+
+Then point your AI agent (e.g. Claude, Cursor, Antigravity) to the cloned folder and instruct it to read `SKILL.md` to activate.
+
+---
+
+## ⚙️ Part 2 — Installing the CLI (Required)
+
+This skill relies on the `methodalgo` CLI to fetch market data. **You must install it before using any skill commands.**
 
 ```bash
 npm install -g methodalgo-cli
 ```
 
-### 2. Verify Installation
+Verify the installation and configure your API key:
 ```bash
 methodalgo --version
-```
-
-### 3. Configure API Key
-Configure your API key for first-time use (follow the CLI prompts):
-```bash
 methodalgo login
 ```
 
@@ -105,3 +121,27 @@ methodalgo snapshot SOLUSDT.P 60 --url --json
 - For the `token-unlock` channel, the root of the JSON response contains a `signals` array, which is slightly different from other channels.
 
 ---
+
+## 📁 File Structure
+
+```text
+methodalgo-market-intel-explorer/
+├── README.md                 # Overview and installation guide (this file)
+├── SKILL.md                  # Main AI instruction file (System Prompt)
+├── CLAUDE.md                 # Claude-specific instructions
+└── references/               # Additional context for AI agents
+    ├── ai-prompts.md         # Recommended prompts for data analysis
+    ├── sample-output.md      # Example JSON responses for CLI commands
+    └── signal-channels.md    # Supported Discord channels and descriptions
+```
+
+---
+
+## 🔄 How to Update the Skill
+
+When updating or extending this skill, please follow these guidelines:
+
+1. **Adding New Channels/Features**: Update `references/signal-channels.md` and add relevant examples to `references/sample-output.md`.
+2. **Modifying AI Instructions**: Any prompt adjustments or new rules must be centrally updated in `SKILL.md` to ensure the AI parses them correctly.
+3. **Updating Documentation**: Keep `README.md` aligned with the latest features for human readability.
+4. **Context Refresh**: After modifying any core files, make sure to instruct your AI agent to re-read `SKILL.md` to refresh its working context.
