@@ -38,7 +38,7 @@ Note that the `token-unlock` channel returns an object (`{ signals: [...] }`), w
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Installation 
 
 ### 1. Prerequisites
 Ensure the `methodalgo` CLI is installed globally on your system:
@@ -105,4 +105,3 @@ methodalgo snapshot SOLUSDT.P 60 --url --json
 - For the `token-unlock` channel, the root of the JSON response contains a `signals` array, which is slightly different from other channels.
 
 ---
-💡 *This skill is powered by Antigravity.*
