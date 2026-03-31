@@ -1,60 +1,62 @@
-# 🤖 AI 代理指令模板 (AI Prompts)
+# 🤖 AI Agent Prompt Templates (AI Prompts)
 
-本文件提供了一系列经过优化的 Prompt 示例，旨在帮助 AI 代理（如 Claude, GPT-4）最高效地利用 `methodalgo-market-intel-explorer` 技能。
-
----
-
-## ⚡ 核心原则
-- **JSON 驱动**: 始终要求输出 JSON 以进行精确解析。
-- **两阶段查询**: 优先预览，后深挖。
-- **上下文感知**: 结合当前日期进行时间范围过滤。
+This document provides a series of optimized prompt examples designed to help AI agents (such as Claude or GPT-4) most efficiently utilize the `methodalgo-market-intel-explorer` skill.
 
 ---
 
-## 📝 场景化模板
+## ⚡ Core Principles
 
-### 1. 每日早报/市场综述
-**Prompt**:
-> 请使用 `methodalgo-market-intel-explorer` 技能，为我生成一份今日加密市场综述。
-> 1. 调用 `signals market-today` 获取恐慌贪婪指数和山寨季指标。
-> 2. 调用 `signals etf-tracker` 获取最新的 ETF 资金流向。
-> 3. 调用 `news --type article --limit 50` 获取今日 50 条新闻。
-> 4. 调用 `news --type breaking --limit 50` 获取最新的重要的 50 突发要闻。
-
-> 请结合以上数据，用简洁的中文分析当前市场情绪和潜在风险。
-
-### 2. 特定币种深度扫描 (如 SOL)
-**Prompt**:
-> 我需要对 SOL 进行深度扫描：
-> 1. 搜索关于 SOL 的最新 10 条新闻：`news --type article --search 'SOL' --limit 10`。
-> 2. 检查是否有针对 SOL 的 MTF 突破信号：`signals breakout-mtf --limit 200` 并过滤出 SOL 相关的项。
-> 3. 获取一张 SOLUSDT.P 的 1 小时图表快照：`snapshot SOLUSDT.P 60 --url`。
-> 请整合以上信息，判断 SOL 当前的短期走势。
-
-### 3. 监控大额强平与情绪反转
-**Prompt**:
-> 实时监控市场异动：
-> 1. 获取最新的 50 条大额强平记录：`signals liquidation --limit 50`。
-> 2. 检查是否有 `exhaustion-buyer` 或 `exhaustion-seller` 反转信号：`signals exhaustion-seller --limit 5`。
-> 3. 如果发现大额强平（超过 $1M）或强反转信号，请立即警示并提供对应的图表快照链接。
-
-### 4. 代币解锁提醒
-**Prompt**:
-> 查询即将到来的重要代币解锁事件：
-> 调用 `signals token-unlock --limit 1`。
-> 注意：此命令返回的是对象，请提取 `signals` 数组中的 `symbol`, `perc` (解锁百分比), `countDown` 和 `unlockTokenVal` (解锁价值)。`ts`是计划解锁时间.
-> 重点标记解锁比例超过流通量 1% 的项目，并分析其对价格的潜在压力。
+- **JSON-Driven**: Always request JSON output for precise parsing.
+- **Two-Phase Query**: Prioritize a brief preview before performing a deep dive.
+- **Context-Aware**: Combine the current date with time-range filtering.
 
 ---
 
-## 🛠️ 常见问题处理 (Troubleshooting for AI)
+## 📝 Scenario-based Templates
 
-- **如果遇到 `token-unlock` 数据解析失败**:
-  - *原因*: 该频道返回 `{ signals: [...] }` 而非普通频道返回的 `[...]`。
-  - *对策*: AI 应该检查根对象是否包含 `signals` 键，如果是，则迭代该键下的数组。
+### 1. Daily Morning Report / Market Overview
+**Prompt**:
+> Please use the `methodalgo-market-intel-explorer` skill to generate a crypto market overview for me today.
+> 1. Call `signals market-today` to get the Fear & Greed Index and Altcoin Season metrics.
+> 2. Call `signals etf-tracker` to get the latest ETF fund flows.
+> 3. Call `news --type article --limit 50` to fetch 50 of today's deep-dive news articles.
+> 4. Call `news --type breaking --limit 50` to fetch the latest 50 important breaking news flashes.
+>
+> Combine the above data to analyze current market sentiment and potential risks in concise English.
 
-- **如果数据过旧**:
-  - *对策*: 检查返回 JSON 中的 `timestamp` 或 `updatedAt` 字段。如果超过 24 小时，建议提醒用户可能存在延迟，或尝试增量拉取最新数据。
+### 2. Deep Scan for a Specific Symbol (e.g., SOL)
+**Prompt**:
+> I need to perform a deep scan for SOL:
+> 1. Search for the latest 10 news items about SOL: `news --type article --search 'SOL' --limit 10`.
+> 2. Check for any MTF breakout signals for SOL: `signals breakout-mtf --limit 200` and filter for SOL-related items.
+> 3. Get a 1-hour chart snapshot for SOLUSDT.P: `snapshot SOLUSDT.P 60 --url`.
+>
+> Integrate the above information to determine the current short-term trend for SOL.
 
-- **如果上下文溢出**:
-  - *对策*: 将 `--limit` 从 50 缩减至 10，或增加 `--search` 关键词精确匹配。
+### 3. Monitoring Large Liquidations and Sentiment Reversal
+**Prompt**:
+> Monitor market anomalies in real-time:
+> 1. Fetch the latest 50 large liquidation records: `signals liquidation --limit 50`.
+> 2. Check for any `exhaustion-buyer` or `exhaustion-seller` reversal signals: `signals exhaustion-seller --limit 5`.
+> 3. If any large liquidations (over $1M) or strong reversal signals are found, alert me immediately and provide the corresponding chart snapshot links.
+
+### 4. Token Unlock Alerts
+**Prompt**:
+> Query upcoming important token unlock events:
+> Call `signals token-unlock --limit 1`.
+> Note: This command returns an object; please extract `symbol`, `perc` (unlock percentage), `countDown`, and `unlockTokenVal` (unlock value) from the `signals` array. `ts` is the scheduled unlock time.
+> Highlight projects with unlock proportions exceeding 1% of the circulating supply and analyze the potential downward pressure on price.
+
+---
+
+## 🛠️ Troubleshooting for AI
+
+- **If `token-unlock` data parsing fails**:
+  - *Cause*: This channel returns `{ signals: [...] }` instead of the `[...]` returned by standard channels.
+  - *Solution*: The AI should check if the root object contains a `signals` key; if it does, iterate through the array under that key.
+
+- **If data is outdated**:
+  - *Solution*: Check the `timestamp` or `updatedAt` fields in the returned JSON. If they are older than 24 hours, suggest alerting the user about potential delays or attempting an incremental fetch for latest data.
+
+- **If context overflow occurs**:
+  - *Solution*: Reduce the `--limit` from 50 to 10, or use more specific `--search` keywords for exact matches.

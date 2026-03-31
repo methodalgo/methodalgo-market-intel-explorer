@@ -2,66 +2,66 @@
 name: methodalgo-market-intel-explorer
 version: 1.0.0
 category: data-provider
-description: 获取加密货币新闻、图表快照、宏观经济事件、交易信号。当用户要求查看最新加密货币新闻、市场快照、图表截图、交易信号、代币解锁、ETF 资金流、恐慌贪婪指数等市场数据时使用此技能。
+description: Fetches cryptocurrency news, chart snapshots, macroeconomic events, and trading signals. Use this skill when the user wants to check the latest crypto news, market snapshots, chart screenshots, trading signals, token unlocks, ETF flows, Fear & Greed indices, and other market data.
 ---
 
-# Methodalgo 市场情报探索技能
+# Methodalgo Market Intel Explorer Skill
 
-## 前置条件
+## Prerequisites
 
-`methodalgo` CLI 必须全局安装：
+The `methodalgo` CLI must be installed globally:
 ```bash
 npm install -g methodalgo-cli
 ```
 
-验证：`methodalgo --version`
+Verify with: `methodalgo --version`
 
 ---
 
-## 📚 相关参考 (LLM 建议优先阅读)
+## 📚 References (LLM Recommended Reading)
 
-为了更精准地执行任务，建议在处理复杂查询前参考以下文档：
+To execute tasks more accurately, it is recommended to refer to the following documents before handling complex queries:
 
-- **[信号频道详细参考](file:///Users/justin/Documents/SynologyDrive/0Dev/skills/methodalgo-skills/methodalgo-market-intel-explorer/references/signal-channels.md)**: 详细说明了各信号频道（Breakout, Exhaustion, Golden Pit等）的触发机制、时间框架及 `details` 字段含义。
-- **[AI 提示词指南](file:///Users/justin/Documents/SynologyDrive/0Dev/skills/methodalgo-skills/methodalgo-market-intel-explorer/references/ai-prompts.md)**: 提供了针对“今日市场综述”及“特定币种扫描”等场景的提示词模板。
-- **[数据输出示例](file:///Users/justin/Documents/SynologyDrive/0Dev/skills/methodalgo-skills/methodalgo-market-intel-explorer/references/sample-output.md)**: 展示了新闻、信号及快照命令的真实 JSON 返回结构，便于编写解析逻辑。
+- **[Signal Channels Detailed Reference](file:///Users/justin/Documents/SynologyDrive/0Dev/skills/methodalgo-skills/methodalgo-market-intel-explorer/references/signal-channels.md)**: Detailed explanation of the trigger mechanisms, timeframes, and `details` field meanings for various signal channels (Breakout, Exhaustion, Golden Pit, etc.).
+- **[AI Prompts Guide](file:///Users/justin/Documents/SynologyDrive/0Dev/skills/methodalgo-skills/methodalgo-market-intel-explorer/references/ai-prompts.md)**: Provides prompt templates for scenarios such as "Daily Market Overview" and "Specific Coin Deep Scan".
+- **[Data Output Samples](file:///Users/justin/Documents/SynologyDrive/0Dev/skills/methodalgo-skills/methodalgo-market-intel-explorer/references/sample-output.md)**: Shows real JSON response structures for news, signals, and snapshot commands to facilitate parsing logic.
 
 ---
 
-## 使用方法
+## Usage
 
-直接调用 `methodalgo` CLI，**必须加 `--json`** 获取结构化数据：
+Invoke the `methodalgo` CLI directly; **the `--json` flag is mandatory** to obtain structured data:
 
 ```bash
-# 新闻
+# News
 methodalgo news --type <type> --limit <N> --json
 
-# 信号
+# Signals
 methodalgo signals <channel> --limit <N> --json
 
-# 快照
+# Snapshot
 methodalgo snapshot <symbol> [tf] --url --json
 ```
 
 ---
 
-## 📸 快照命令
+## 📸 Snapshot Command
 
 ```bash
 methodalgo snapshot <symbol> [tf] --url --json
 ```
 
-### 参数说明
+### Parameter Description
 
-| 参数 | 说明 | 示例 |
-|------|------|------|
-| `symbol` | 交易对符号（必填） | `SOLUSDT` (现货) / `SOLUSDT.P` (合约) |
-| `tf` | 时间周期（可选，默认 60） | `15` / `30` / `60` / `240` / `D` / `2D` / `W` / `2W` / `M` |
-| `--url` | 强制返回 URL 链接而非二进制流 | `--url` |
-| `--buffer` | 输出原始二进制格式图片流（适合程序直接处理） | `--buffer` |
-| `--json` | 输出结构化 JSON 数据 | `--json` |
+| Parameter | Description | Example |
+|----------|-------------|---------|
+| `symbol` | Trading pair symbol (Required) | `SOLUSDT` (Spot) / `SOLUSDT.P` (Perpetual) |
+| `tf` | Timeframe (Optional, default: 60) | `15` / `30` / `60` / `240` / `D` / `W` / `M` |
+| `--url` | Forces a URL link to be returned instead of a binary stream | `--url` |
+| `--buffer` | Outputs the raw binary image stream (suitable for direct programmatic processing) | `--buffer` |
+| `--json` | Outputs structured JSON data | `--json` |
 
-### 输出结构
+### Output Structure
 
 ```json
 {
@@ -74,33 +74,33 @@ methodalgo snapshot <symbol> [tf] --url --json
 
 ---
 
-## 📰 新闻命令
+## 📰 News Command
 
 ```bash
 methodalgo news --type <type> --limit <N> --json
 ```
 
-### 可用类型
+### Available Types
 
-| 类型 | 说明 |
-|------|------|
-| `article` | 深度加密市场新闻与分析（含摘要和 AI 分析） |
-| `breaking` | 实时突发快讯 |
-| `onchain` | 链上数据异动监测 |
-| `report` | 机构研究报告 |
+| Type | Description |
+|------|-------------|
+| `article` | Deep crypto market news and analysis (includes summaries and AI analysis) |
+| `breaking` | Real-time breaking news flashes |
+| `onchain` | Monitoring for on-chain data anomalies |
+| `report` | Institutional research reports |
 
-### 可选参数
+### Optional Parameters
 
-| 参数 | 说明 | 示例 |
-|------|------|------|
-| `--type` | 新闻类型（必填） | `--type breaking` |
-| `--limit` | 数量限制，最高 500 | `--limit 10` |
-| `--language` | 语言 `zh` / `en` | `--language zh` |
-| `--search` | 标题关键词搜索 | `--search 'Bitcoin'` |
-| `--start-date` | 起始日期 | `--start-date 2026-03-20` |
-| `--end-date` | 结束日期 | `--end-date 2026-03-30` |
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `--type` | News type (Required) | `--type breaking` |
+| `--limit` | Limit on the number of results, up to 500 | `--limit 10` |
+| `--language` | Language `zh` / `en` | `--language zh` |
+| `--search` | Search for keywords in titles | `--search 'Bitcoin'` |
+| `--start-date` | Start date | `--start-date 2026-03-20` |
+| `--end-date` | End date | `--end-date 2026-03-30` |
 
-### 输出结构
+### Output Structure
 
 ```json
 [
@@ -116,50 +116,50 @@ methodalgo news --type <type> --limit <N> --json
 ]
 ```
 
-> `article` 类型通常包含 `excerpt`、`analysis` 和 `url`；`breaking`、`onchain`、`report` 类型通常无 excerpt。建议一次获取足够数量的新闻, 如50-100条, 以确保能覆盖到足够的时间范围。 
+> The `article` type usually includes `excerpt`, `analysis`, and `url`; `breaking`, `onchain`, and `report` types typically do not have an `excerpt`. It is recommended to fetch a sufficient quantity of news items, such as 50-100, to ensure adequate time coverage.
 
 ---
 
-## 📡 信号命令
+## 📡 Signals Command
 
 ```bash
 methodalgo signals <channel> --limit <N> --json
 ```
 
-### 频道
+### Channels
 
-| 频道 | 说明 | 更新频率 |
-|------|------|----------|
-| `breakout-htf` | 高时间框架突破（1D/3D），100 K线滚动窗口 | 中频 |
-| `breakout-mtf` | 中时间框架突破（1H/4H），100 K线滚动窗口 | 高频 |
-| `breakout-24h` | 24 小时滚动窗口突破检测 | 超高频 |
-| `liquidation` | 大额强平订单实时提醒 | 实时 |
-| `exhaustion-seller` | 卖家耗尽反转信号（死神清算热力图，库存 <10%/<5%） | 中低频 |
-| `exhaustion-buyer` | 买家耗尽反转信号（死神清算热力图，库存 <10%/<5%） | 中低频 |
-| `golden-pit-mtf` | Smart Cloud的黄金坑信号（30m/1h/4h），Bull=回撤后将拉升，Bear=上扬后将下跌 | 中频 |
-| `golden-pit-ltf` | Smart Cloud的黄金坑信号（5m/15m），Bull=回撤后将拉升，Bear=上扬后将下跌 | 高频 |
-| `token-unlock` | 代币解锁事件，含解锁时间,代币基本面数据、解锁量等等 | 每日 |
-| `etf-tracker` | BTC/ETH/SOL/XRP ETF 每日资金流入流出 | 每日 |
-| `market-today` | 山寨季指数 + 恐慌贪婪指数 | 每日 |
+| Channel | Description | Update Frequency |
+|---------|-------------|------------------|
+| `breakout-htf` | High Timeframe Breakout (1D/3D), 100-candle rolling window | Medium |
+| `breakout-mtf` | Medium Timeframe Breakout (1H/4H), 100-candle rolling window | High |
+| `breakout-24h` | 24-hour rolling window breakout detection | Ultra-high |
+| `liquidation` | Real-time alerts for large liquidation orders | Real-time |
+| `exhaustion-seller` | Seller exhaustion reversal signal (Liquidation Heatmap, inventory <10%/<5%) | Low/Medium |
+| `exhaustion-buyer` | Buyer exhaustion reversal signal (Liquidation Heatmap, inventory <10%/<5%) | Low/Medium |
+| `golden-pit-mtf` | Golden Pit signal (30m/1h/4h) - Bull=recovery after dip, Bear=drop after bounce | Medium |
+| `golden-pit-ltf` | Golden Pit signal (5m/15m) - Bull=recovery after dip, Bear=drop after bounce | High |
+| `token-unlock` | Token unlock events, including unlock time, fundamentals, volume, etc. | Daily |
+| `etf-tracker` | Daily BTC/ETH/SOL/XRP ETF fund inflows and outflows | Daily |
+| `market-today` | Altcoin Season Index + Fear & Greed Index | Daily |
 
-### 输出结构
+### Output Structure
 
-**常规信号频道**（breakout / liquidation / exhaustion / golden-pit / etf-tracker / market-today）：
+**Standard Signal Channels** (breakout / liquidation / exhaustion / golden-pit / etf-tracker / market-today):
 
 ```json
 [
   {
     "id": "1488261183843864617-0-0",
-    "timestamp": 1774899516784, // 信号发送时间戳
+    "timestamp": 1774899516784, // Signal transmission timestamp
     "attachments": [],
-    "image": "https://m.methodalgo.com/tmp/xxx.webp", // 图表或数据图链接（可选，或为 null）
+    "image": "https://m.methodalgo.com/tmp/xxx.webp", // Link to chart or data image (optional, may be null)
     "signals": [
       {
-        "title": "信号标题展示...",
-        "description": "信号简述内容（不同频道格式不一）...",
-        "direction": "bull/bear/空字符串", // 方向提示
+        "title": "Signal title display...",
+        "description": "Signal summary content (format varies by channel)...",
+        "direction": "bull/bear/empty string", // Directional hint
         "details": { 
-          // ⚠️ 不同频道的 details 对象字段不一致，具体枚举如下：
+          // ⚠️ Field names in the details object vary by channel; see the following enumeration:
         }
       }
     ]
@@ -167,99 +167,99 @@ methodalgo signals <channel> --limit <N> --json
 ]
 ```
 
-**各常规频道 `details` 结构枚举：**
+**`details` Structure Enumeration for Standard Channels:**
 
-1. **`breakout-*` 系列**（现获取到突破交易机会）
+1. **`breakout-*` series** (Detecting breakout trading opportunities)
 ```json
 {
   "Symbol": "NIGHTUSDT.P", "TimeFrame": "1h", "Type": "DOWN / UP", 
   "BreakPrice": "0.04284", "Exchange": "BINANCE"
 }
 ```
-2. **`liquidation`**（发现大额爆仓/清算订单）
+2. **`liquidation`** (Detecting large liquidation/blow-off orders)
 ```json
 {
   "Symbol": "ZECUSDT.P", "Side": "🔴 SHORT / 🟢 LONG", "Quantity": "88.245", 
   "Average Price": "$227.43", "Liquidation Price": "$229.70", "Position Total": "$20069"
 }
 ```
-3. **`exhaustion-*` 系列**（买家或卖家耗尽，趋势可能逆转）
+3. **`exhaustion-*` series** (Buyer or seller exhaustion, potential trend reversal)
 ```json
 {
   "Type": "Early Reversal", "Timeframe": "30m", "Exhaustion Side": "SELLER / BUYER", 
   "Safety": "...", "Tip": "...", "Exchange": "Binance"
 }
 ```
-4. **`golden-pit-*` 系列**（Smart Cloud 形态中回踩/冲高的反切机会）
+4. **`golden-pit-*` series** (Re-entry opportunities in Smart Cloud patterns)
 ```json
 {
   "Pattern": "Pull then Push", "Safety": "Wait 6-10 bars to develop..."
 }
 ```
-5. **`etf-tracker`**（ETF 资金流入流出播报）
+5. **`etf-tracker`** (ETF fund flow broadcast)
 ```json
 {
   "Net Inflow": "$0K", "7 Days Avg.": "$663.0K"
 }
 ```
-6. **`market-today`**（市场情绪，含山寨季指标与恐慌贪婪指数）
+6. **`market-today`** (Market sentiment, including Season Index and Fear & Greed Index)
 ```json
-// 类型 A (Season Index)
+// Type A (Season Index)
 { "Alt Season": "...", "Bitcoin Season": "..." }
-// 类型 B (Fear And Greed Index)
+// Type B (Fear And Greed Index)
 { "Yesterday": "12", "3Days Ago": "10", "7Days Ago": "10" }
 ```
 
-**token-unlock 频道**（数据结构不同，外层有 `signals` 数组）：
+**`token-unlock` channel** (Unique data structure with a `signals` array at the top level):
 
 ```json
 {
   "signals": [
     {
-      "ts": 1774915176616,//解锁时间
-      "symbol": "OP",//代币名称
-      "perc": 1.52,//解锁百分比
-      "progress": "40.91%",//解锁进度
-      "circSup": "6.79 B ICE",//代币当前流通量
-      "countDown": "0Day23Hr30Min",//解锁倒计时 相对于解锁更新时间, 请根据用户当前时区 使用数据中的ts与updatedAt计算实时倒计时
-      "marketCap": "$218.99 M",//代币当前市值
-      "unlockToken": "32.21 M",//解锁代币数量
-      "unlockTokenVal": "$3.36 M (1.52% of M.Cap)"//解锁代币价值
+      "ts": 1774915176616, // Unlock time
+      "symbol": "OP", // Token name
+      "perc": 1.52, // Unlock percentage
+      "progress": "40.91%", // Unlock progress
+      "circSup": "6.79 B ICE", // Current circulating supply
+      "countDown": "0Day23Hr30Min", // Countdown relative to updatedAt. Please calculate real-time using the ts and updatedAt in the data.
+      "marketCap": "$218.99 M", // Current market capitalization
+      "unlockToken": "32.21 M", // Number of tokens unlocked
+      "unlockTokenVal": "$3.36 M (1.52% of M.Cap)" // Value of tokens unlocked
     }
   ],
-  "updatedAt": 1774915176616//数据更新时间
+  "updatedAt": 1774915176616 // Data update time
 }
 ```
 
 ---
 
-## 🎯 使用场景速查
+## 🎯 Scenario Quick Look
 
-| 用户意图 | 命令 |
-|----------|------|
-| 查最新会影响市场情绪的快讯 | `methodalgo news --type breaking --limit 50 --json` |
-| 查加密行业新闻 | `methodalgo news --type article --limit 100 --json` |
-| 搜索某币种新闻 | `methodalgo news --type article --search 'Bitcoin' --limit 5 --json` |
-| 查突破信号 | `methodalgo signals breakout-mtf --limit 10 --json` |
-| 查代币解锁 | `methodalgo signals token-unlock --limit 1 --json` |
-| 查 ETF 资金流 | `methodalgo signals etf-tracker --limit 10 --json` |
-| 查市场情绪 | `methodalgo signals market-today --limit 5 --json` |
-| 查强平事件 | `methodalgo signals liquidation --limit 10 --json` |
-| 查黄金坑信号 | `methodalgo signals golden-pit-mtf --limit 10 --json` |
-| 查图表快照 | `methodalgo snapshot BTCUSDT.P 60 --url --json` |
-| 增量拉取更多信号 (不适用token-unlock类型的信号)| `methodalgo signals <channel> --limit 100 --after "消息ID" --json` |
+| User Intent | Command |
+|-------------|---------|
+| Check latest news affecting market sentiment | `methodalgo news --type breaking --limit 50 --json` |
+| Check crypto industry news | `methodalgo news --type article --limit 100 --json` |
+| Search news for a specific symbol | `methodalgo news --type article --search 'Bitcoin' --limit 5 --json` |
+| Check breakout signals | `methodalgo signals breakout-mtf --limit 10 --json` |
+| Check token unlocks | `methodalgo signals token-unlock --limit 1 --json` |
+| Check ETF fund flows | `methodalgo signals etf-tracker --limit 10 --json` |
+| Check global market sentiment | `methodalgo signals market-today --limit 5 --json` |
+| Check liquidation events | `methodalgo signals liquidation --limit 10 --json` |
+| Check Golden Pit signals | `methodalgo signals golden-pit-mtf --limit 10 --json` |
+| Get chart snapshots | `methodalgo snapshot BTCUSDT.P 60 --url --json` |
+| Incremental fetch for more signals (except token-unlock) | `methodalgo signals <channel> --limit 100 --after "msgId" --json` |
 
 ---
 
-## 注意事项
+## Important Notes
 
-1. **输出格式**：输出是**纯 JSON**，直接 `JSON.parse` 即可。
-2. **两阶段拉取策略**：
-   - 第一阶段（快照）：取 5 条数据，用于初步判断趋势。
-   - 第二阶段（深挖）：基于特定 ID 或关键字进行增量拉取（`--after` / `--search`）。
-3. **数据量限制**：`--limit` 控制数据量。新闻最高 500 条；信号最高 600 条。
-4. **语言处理**：新闻类数据优先读取 `title.zh` / `excerpt.zh` / `analysis.zh`。
-5. **结构不一致性提醒**：`token-unlock` 返回对象（包含 `signals` 数组），其他频道返回数组。AI 必须根据 `channel` 判断处理逻辑。
-6. **快照截图**：`snapshot` 默认通过 `--url` 返回图片链接，请通过该链接获取可视化的行情图表。
+1. **Output Format**: Output is **pure JSON**; simply use `JSON.parse`.
+2. **Two-Phase Fetch Strategy**:
+   - Phase 1 (Snapshot): Fetch 5 items to make a preliminary trend assessment.
+   - Phase 2 (Deep Dive): Perform incremental fetches based on specific IDs or keywords (`--after` / `--search`).
+3. **Data Volume Limits**: `--limit` controls the amount of data. News: max 500 items; Signals: max 600 items.
+4. **Language Handling**: For news data, prioritize `title.zh` / `excerpt.zh` / `analysis.zh` fields for Chinese content (if requested).
+5. **Structural Inconsistency Alert**: `token-unlock` returns an object (containing a `signals` array), while other channels return an array. The AI must determine processing logic based on the `channel`.
+6. **Snapshot Screenshots**: `snapshot` returns image links via `--url` by default. Please access the visualized market charts through these links.
 
 > Github: https://github.com/methodalgo/methodalgo-market-intel-explorer

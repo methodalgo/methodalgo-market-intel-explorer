@@ -1,6 +1,6 @@
 # 🛠️ Methodalgo Market Intel Explorer
 
-`methodalgo-market-intel-explorer` 是一个专为 AI 代理（如 Claude）设计的市场情报探索技能。它通过集成的 `methodalgo` CLI，实时捕捉加密货币新闻、宏观经济事件、交易信号、ETF 资金流以及市场情绪指标。
+`methodalgo-market-intel-explorer` is a market intelligence exploration skill specifically designed for AI agents (such as Claude). Through the integrated `methodalgo` CLI, it captures real-time cryptocurrency news, macroeconomic events, trading signals, ETF fund flows, and market sentiment indicators.
 
 ---
 
@@ -15,93 +15,94 @@
 ```
 ---
 
-## ✨ 核心特性
+## ✨ Core Features
 
-- **📰 全方位新闻**: 支持深度文章（Article）、实时快讯（Breaking）、链上监测（On-chain）及机构报告（Report）。
-- **📡 实时信号**: 包括高/中时间框架突破（Breakout）、大额强平（Liquidation）、买家/卖家耗尽（Exhaustion）以及 Smart Cloud 模式的黄金坑等信号。
-- **📊 市场数据**: 提供代币解锁倒计时、ETF 资金流向及每日市场综述（恐慌贪婪指数）。
-- **📸 实时快照**: 随时获取任意币种的 TradingView 图表截图（支持现货及合约）。
-- **🤖 AI 友好**: 输出纯 JSON 结构化数据，方便 AI 提取关键信息。
-- **🧩 智能拉取**: 支持 `--after` 分页、`--search` 过滤及时间窗口查询。
+- **📰 Comprehensive News**: Supports deep-dive articles (`article`), real-time breaking news (`breaking`), on-chain monitoring (`onchain`), and institutional research reports (`report`).
+- **📡 Real-time Signals**: Includes High/Medium Timeframe Breakouts (`breakout`), Large Liquidations (`liquidation`), Buyer/Seller Exhaustion (`exhaustion`), and "Golden Pit" signals based on Smart Cloud patterns.
+- **📊 Market Data**: Provides token unlock countdowns, ETF fund flows, and daily market summaries (Fear & Greed Index).
+- **📸 Instant Snapshots**: Fetch TradingView chart screenshots for any symbol at any time (supports Spot and Perpetual).
+- **🤖 AI-Friendly**: Outputs pure JSON structured data, making it easy for AI to extract key information.
+- **🧩 Smart Fetching**: Supports `--after` pagination, `--search` filtering, and time-window queries.
 
 ---
 
-## 🏗️ 最佳实践 (AI 代理建议)
+## 🏗️ Best Practices (AI Agent Recommendations)
 
-### 1. 两阶段查询法
-为节省上下文开销并提高准确度，建议先获取 5 条概要，再根据重点分析进行深挖。
-- **预览**: `methodalgo signals breakout-mtf --limit 5 --json`
-- **深挖**: `methodalgo signals breakout-mtf --limit 50 --after "msgId" --json`
+### 1. Two-Phase Query Method
+To save context overhead and improve accuracy, it is recommended to first fetch a summary of 5 items, then perform a deep dive based on key findings.
+- **Preview**: `methodalgo signals breakout-mtf --limit 5 --json`
+- **Deep Dive**: `methodalgo signals breakout-mtf --limit 50 --after "msgId" --json`
 
-### 2. 结构化处理
-注意 `token-unlock` 频道返回的是对象 (`{ signals: [...] }`)，其他频道返回的是数组。AI 解析时请根据频道类型选择对应的提取逻辑。
+### 2. Structural Handling
+Note that the `token-unlock` channel returns an object (`{ signals: [...] }`), while other channels return an array. The AI should select the corresponding extraction logic based on the channel type.
 
+---
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 1. 前置要求
-确保系统中已全局安装了 `methodalgo` CLI：
+### 1. Prerequisites
+Ensure the `methodalgo` CLI is installed globally on your system:
 
 ```bash
 npm install -g methodalgo-cli
 ```
 
-### 2. 验证安装
+### 2. Verify Installation
 ```bash
 methodalgo --version
 ```
 
-### 3. 配置密钥
-初次使用需配置 API 密钥（按照 CLI 引导操作）：
+### 3. Configure API Key
+Configure your API key for first-time use (follow the CLI prompts):
 ```bash
 methodalgo login
 ```
 
 ---
 
-## 📖 使用指南
+## 📖 Usage Guide
 
-该技能主要通过 `methodalgo` CLI 执行命令。建议始终携带 `--json` 参数以获取机器可读的数据。
+This skill primarily executes commands via the `methodalgo` CLI. It is recommended to always include the `--json` flag to obtain machine-readable data.
 
-### 获取新闻
+### Fetch News
 ```bash
-# 获取最新的 5 条实时快讯
+# Get the latest 5 breaking news flashes
 methodalgo news --type breaking --limit 5 --json
 ```
 
-### 获取交易信号
+### Fetch Trading Signals
 ```bash
-# 获取最新的中级别（MTF）突破信号
+# Get the latest Medium Timeframe (MTF) breakout signals
 methodalgo signals breakout-mtf --limit 10 --json
 ```
 
-### 获取快照
+### Fetch Snapshots
 ```bash
-# 获取 SOLUSDT.P (合约) 的 1 小时图表
+# Get a 1-hour chart for SOLUSDT.P (Perpetual)
 methodalgo snapshot SOLUSDT.P 60 --url --json
 ```
 
 ---
 
-## 🎯 常用场景
+## 🎯 Common Scenarios
 
-| 目标 | 推荐命令 |
+| Objective | Recommended Command |
 | :--- | :--- |
-| **今日热点** | `methodalgo news --type article --limit 5 --json` |
-| **监控强平** | `methodalgo signals liquidation --limit 10 --json` |
-| **中线突破** | `methodalgo signals breakout-mtf --limit 10 --json` |
-| **趋势反转** | `methodalgo signals exhaustion-buyer --limit 5 --json` |
-| **抄底黄金坑** | `methodalgo signals golden-pit-mtf --limit 5 --json` |
-| **获取快照** | `methodalgo snapshot BTCUSDT.P 60 --url --json` |
-| **查看 ETF** | `methodalgo signals etf-tracker --limit 1 --json` |
-| **代币解锁** | `methodalgo signals token-unlock --limit 10 --json` |
-| **情绪监测** | `methodalgo signals market-today --limit 1 --json` |
+| **Today's Hot Topics** | `methodalgo news --type article --limit 5 --json` |
+| **Monitor Liquidations** | `methodalgo signals liquidation --limit 10 --json` |
+| **Mid-term Breakouts** | `methodalgo signals breakout-mtf --limit 10 --json` |
+| **Trend Reversals** | `methodalgo signals exhaustion-buyer --limit 5 --json` |
+| **Buy the Dip (Golden Pit)** | `methodalgo signals golden-pit-mtf --limit 5 --json` |
+| **Get Chart Snapshot** | `methodalgo snapshot BTCUSDT.P 60 --url --json` |
+| **Check ETF Flows** | `methodalgo signals etf-tracker --limit 1 --json` |
+| **Token Unlocks** | `methodalgo signals token-unlock --limit 10 --json` |
+| **Sentiment Monitoring** | `methodalgo signals market-today --limit 1 --json` |
 
 ---
 
-## ⚠️ 注意事项
-- `--limit` 参数可调节返回的数据条数，请根据上下文窗口大小合理设定。,避免过小获得不了全面数据,也避免过大占用大量上下文
-- 对于 `token-unlock` 频道，返回的 JSON 根部包含 `signals` 数组，与其他频道略有不同。
+## ⚠️ Important Notes
+- The `--limit` parameter controls the number of items returned; please set it reasonably based on the context window size. Avoid a limit that is too small (missing data) or too large (consuming excessive context).
+- For the `token-unlock` channel, the root of the JSON response contains a `signals` array, which is slightly different from other channels.
 
 ---
-💡 *本技能由 Antigravity 强力驱动。*
+💡 *This skill is powered by Antigravity.*

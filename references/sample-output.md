@@ -1,12 +1,12 @@
-# JSON 输出样本 (全面版)
+# JSON Output Samples (Full Version)
 
-以下为 `methodalgo` CLI 各命令的真实结构化输出示例，供 AI 代理准确理解数据模式、字段类型及其业务含义。
+The following are real structured output examples from various `methodalgo` CLI commands, provided to help AI agents accurately understand data patterns, field types, and their business meanings.
 
 ---
 
-## 📰 新闻数据 (news)
+## 📰 News Data (news)
 
-### 1. article（深度文章）
+### 1. article (Deep Analysis)
 ```json
 [
   {
@@ -29,9 +29,9 @@
   }
 ]
 ```
-> **特点**: 包含 `excerpt`、`analysis` 和原文 `url`。
+> **Features**: Includes `excerpt`, `analysis`, and the original `url`.
 
-### 2. breaking（突发快讯）
+### 2. breaking (Breaking News)
 ```json
 [
   {
@@ -45,9 +45,9 @@
   }
 ]
 ```
-> **特点**: 字段非常精简，通常无摘录和分析。
+> **Features**: Highly concise fields, typically lacking an excerpt or analysis.
 
-### 3. onchain（链上数据）
+### 3. onchain (On-chain Data)
 ```json
 [
   {
@@ -61,7 +61,7 @@
 ]
 ```
 
-### 4. report（研究报告）
+### 4. report (Research Reports)
 ```json
 [
   {
@@ -77,9 +77,9 @@
 
 ---
 
-## 📡 信号数据 (signals)
+## 📡 Signal Data (signals)
 
-### 1. breakout-mtf/htf（级别突破）
+### 1. breakout-mtf/htf (Breakouts)
 ```json
 [
   {
@@ -103,7 +103,7 @@
 ]
 ```
 
-### 2. liquidation（大额强平）
+### 2. liquidation (Large Liquidations)
 ```json
 [
   {
@@ -128,7 +128,7 @@
 ]
 ```
 
-### 3. exhaustion-buyer/seller（清算耗尽/反转）
+### 3. exhaustion-buyer/seller (Liquidation Exhaustion/Reversal)
 ```json
 [
   {
@@ -154,7 +154,7 @@
 ]
 ```
 
-### 4. golden-pit-mtf/ltf（黄金坑）
+### 4. golden-pit-mtf/ltf (Golden Pit)
 ```json
 [
   {
@@ -176,7 +176,7 @@
 ]
 ```
 
-### 5. token-unlock（特殊对象结构）
+### 5. token-unlock (Special Object Structure)
 ```json
 {
   "signals": [
@@ -195,7 +195,7 @@
   "updatedAt": 1774915176616
 }
 ```
-> ⚠️ **注意**: 返回的是**单对象**而非数组。
+> ⚠️ **Note**: Returns a **single object** instead of an array.
 
 ### 6. etf-tracker
 ```json
@@ -230,7 +230,7 @@
 
 ---
 
-## 📸 快照数据 (snapshot)
+## 📸 Snapshot Data (snapshot)
 
 ```bash
 methodalgo snapshot SOLUSDT.P 60 --url --json
@@ -244,7 +244,7 @@ methodalgo snapshot SOLUSDT.P 60 --url --json
   "timestamp": 1774900570519
 }
 ```
-> **特点**: 简单映射结构，包含即存即取的 WebP 预览链接。
+> **Features**: Simple mapping structure containing instant-access WebP preview links.
 
 ---
-💡 *提示：所有时间戳均为毫秒级。*
+💡 *Note: All timestamps are in milliseconds.*
