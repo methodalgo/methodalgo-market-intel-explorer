@@ -243,8 +243,11 @@ methodalgo signals <channel> --limit <N> --json
 
 ## 注意事项
 
-- 输出是**纯 JSON**，直接 `JSON.parse` 即可
-- `--limit` 控制数据量，避免 token 溢出
-- 新闻数据来自数据库，单次最高 500 条；信号不使用 `--after` 时最高 600 条,使用`--after`参数时，最多100条
-- 新闻类数据优先读取 `title.zh` / `excerpt.zh` / `analysis.zh` 字段获取中文内容
-- `token-unlock` 返回的是对象（含 `signals` 数组），其他频道返回的是数组
+1. **输出格式**：输出是**纯 JSON**，直接 `JSON.parse` 即可。
+2. **两阶段拉取策略**：
+   - 第一阶段（快照）：取 5 条数据，用于初步判断趋势。
+   - 第二阶段（深挖）：基于特定 ID 或关键字进行增量拉取（`--after` / `--search`）。
+3. **数据量限制**：`--limit` 控制数据量。新闻最高 500 条；信号最高 600 条。
+4. **语言处理**：新闻类数据优先读取 `title.zh` / `excerpt.zh` / `analysis.zh`。
+5. **结构不一致性提醒**：`token-unlock` 返回对象（包含 `signals` 数组），其他频道返回数组。AI 必须根据 `channel` 判断处理逻辑。
+6. **快照截图**：`snapshot` 默认通过 `--url` 返回图片链接，请通过该链接获取可视化的行情图表。
