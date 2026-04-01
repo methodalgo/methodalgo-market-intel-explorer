@@ -1,12 +1,12 @@
 ---
 name: methodalgo-market-intel-explorer
-version: 1.0.3
+version: 1.0.4
 description: Fetches cryptocurrency news, chart snapshots, macroeconomic events, and trading signals. Use this skill when the user wants to check the latest crypto news, market snapshots, chart screenshots, trading signals, token unlocks, ETF flows, Fear & Greed indices, and other market data.
 metadata:
   openclaw:
     requires:
       env:
-        - METHODALGO_API_KEY
+        - METHODALGO_API_KEY # Recommended for non-interactive AI environments (Highest Priority)
       bins:
         - methodalgo
       anyBins:
@@ -49,22 +49,34 @@ Then point your AI agent (e.g. Claude, Cursor, Antigravity) to the cloned folder
 
 ---
 
-## Part 2 — Installing the CLI (Required)
+## Part 2 — Installing the CLI & Authentication
 
-This skill relies on the `methodalgo` CLI, an **open-source npm package** ([npmjs.com/package/methodalgo-cli](https://www.npmjs.com/package/methodalgo-cli)), to fetch market data.
+This skill relies on the `methodalgo-cli`, an **open-source npm package** ([npmjs.com/package/methodalgo-cli](https://www.npmjs.com/package/methodalgo-cli)), to fetch market data.
 
+### 1. Install CLI
 ```bash
 npm install -g methodalgo-cli
 ```
 
-**API Key Required**: This skill requires a Methodalgo API key to authenticate CLI requests.
-- Apply for one at: **https://account.methodalgo.com/account/api-keys**
+### 2. Authentication (Required)
+The CLI supports two authentication methods. **The CLI will prioritize the environment variable over the local config.**
+
+#### Method A: Environment Variable (Recommended for AI Agents)
+Set the following environment variable in your system or IDE:
+- `METHODALGO_API_KEY`: Your Methodalgo API key.
+
+#### Method B: Local CLI Login (Classic)
+Run the following command and enter your key when prompted:
+```bash
+methodalgo login
+```
+
+Apply for a key at: **https://account.methodalgo.com/account/api-keys**
 - The key is stored locally on your machine after login; it is never transmitted outside of Methodalgo's own API.
 
-Verify the installation and authenticate:
+Verify the installation:
 ```bash
 methodalgo --version
-methodalgo login   # follow the prompts to enter your API key
 ```
 
 ---
