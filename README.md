@@ -134,7 +134,6 @@ methodalgo snapshot SOLUSDT.P 60 --url --json
 methodalgo-market-intel-explorer/
 ├── README.md                 # Overview and installation guide (this file)
 ├── SKILL.md                  # Main AI instruction file (System Prompt)
-├── CLAUDE.md                 # Claude-specific instructions
 └── references/               # Additional context for AI agents
     ├── ai-prompts.md         # Recommended prompts for data analysis
     ├── sample-output.md      # Example JSON responses for CLI commands
