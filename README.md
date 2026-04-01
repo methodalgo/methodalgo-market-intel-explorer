@@ -45,10 +45,10 @@ Choose one of the following methods to install this skill into your AI agent:
 ### Option A — ClawHub (Recommended)
 
 ```bash
-clawhub install methodalgo-marketintel-explorer
+clawhub install methodalgo-market-intel-explorer
 ```
 
-> 🔗 **Skill Page**: [https://clawhub.ai/methodalgo/methodalgo-marketintel-explorer](https://clawhub.ai/methodalgo/methodalgo-marketintel-explorer)
+> 🔗 **Skill Page**: [https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer](https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer)
 
 ### Option B — GitHub Clone
 

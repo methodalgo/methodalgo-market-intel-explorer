@@ -26,7 +26,7 @@ credentials:
 provenance:
   cli: https://www.npmjs.com/package/methodalgo-cli
   source: https://github.com/methodalgo/methodalgo-market-intel-explorer
-  registry: https://clawhub.ai/methodalgo/methodalgo-marketintel-explorer
+  registry: https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer
 ---
 
 # Methodalgo Market Intel Explorer Skill
@@ -37,9 +37,9 @@ Choose one of the following methods to install this skill into your AI agent:
 
 ### Option A — ClawHub (Recommended)
 ```bash
-clawhub install methodalgo-marketintel-explorer
+clawhub install methodalgo-market-intel-explorer
 ```
-> 🔗 [https://clawhub.ai/methodalgo/methodalgo-marketintel-explorer](https://clawhub.ai/methodalgo/methodalgo-marketintel-explorer)
+> 🔗 [https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer](https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer)
 
 ### Option B — GitHub Clone
 ```bash
@@ -333,4 +333,4 @@ methodalgo signals <channel> --limit <N> --json
 6. **Snapshot Screenshots**: `snapshot` returns image links via `--url` by default. Please access the visualized market charts through these links.
 
 > Github: https://github.com/methodalgo/methodalgo-market-intel-explorer
-> ClawHub: https://clawhub.ai/methodalgo/methodalgo-marketintel-explorer
+> ClawHub: https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer
