@@ -286,7 +286,7 @@ methodalgo signals <channel> --limit <N> --json
 {
   "signals": [
     {
-      "ts": 1774915176616, // Unlock time
+      "ts": 1774915176617, // Unlock time
       "symbol": "OP", // Token name
       "perc": 1.52, // Unlock percentage
       "progress": "40.91%", // Unlock progress
@@ -297,7 +297,7 @@ methodalgo signals <channel> --limit <N> --json
       "unlockTokenVal": "$3.36 M (1.52% of M.Cap)" // Value of tokens unlocked
     }
   ],
-  "updatedAt": 1774915176616 // Data update time
+  "updatedAt": 1774915176617 // Data update time
 }
 ```
 
@@ -330,7 +330,7 @@ methodalgo signals <channel> --limit <N> --json
 3. **Data Volume Limits**: `--limit` controls the amount of data. News: max 500 items; Signals: max 600 items.
 4. **Language Handling**: For news data, prioritize `title.zh` / `excerpt.zh` / `analysis.zh` fields for Chinese content (if requested).
 5. **Structural Inconsistency Alert**: `token-unlock` returns an object (containing a `signals` array), while other channels return an array. The AI must determine processing logic based on the `channel`.
-6. **Snapshot Screenshots**: `snapshot` returns image links via `--url` by default. Please access the visualized market charts through these links.
+6. **Snapshot Screenshots**: `snapshot` returns image links via `--url` by default. Please access the visualized market charts through these links. 
 
 > Github: https://github.com/methodalgo/methodalgo-market-intel-explorer
 > ClawHub: https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer
