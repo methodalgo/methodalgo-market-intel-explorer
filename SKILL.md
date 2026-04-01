@@ -1,8 +1,24 @@
 ---
 name: methodalgo-market-intel-explorer
-version: 1.0.0
-category: data-provider
+version: 1.0.3
 description: Fetches cryptocurrency news, chart snapshots, macroeconomic events, and trading signals. Use this skill when the user wants to check the latest crypto news, market snapshots, chart screenshots, trading signals, token unlocks, ETF flows, Fear & Greed indices, and other market data.
+metadata:
+  openclaw:
+    requires:
+      env:
+        - METHODALGO_API_KEY
+      bins:
+        - methodalgo
+      anyBins:
+        - node
+        - npm
+    primaryEnv: METHODALGO_API_KEY
+    install:
+      - kind: node
+        package: methodalgo-cli
+        bins: [methodalgo]
+    homepage: https://github.com/methodalgo/methodalgo-market-intel-explorer
+category: data-provider
 credentials:
   - name: METHODALGO_API_KEY
     description: API key for the Methodalgo service. Obtain one at https://account.methodalgo.com/account/api-keys
