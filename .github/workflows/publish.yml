@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'SKILL.md'
-      - 'references/**'
-      - 'README.md'
   workflow_dispatch: # 允许手动触发
 
 jobs:
