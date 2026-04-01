@@ -1,5 +1,5 @@
 .git/
+.github/
 .DS_Store
 CLAUDE.md
 README.md
-scripts/

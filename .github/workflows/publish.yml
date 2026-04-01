@@ -1,0 +1,59 @@
+name: Publish Skill to ClawHub
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'SKILL.md'
+      - 'references/**'
+      - 'README.md'
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 获取完整历史以便提交
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install ClawHub CLI
+        run: npm install -g clawhub
+
+      - name: Auto-increment version and Publish
+        env:
+          CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
+        run: |
+          # 1. 提取当前版本
+          SKILL_FILE="SKILL.md"
+          CURRENT_VERSION=$(grep -E "^version: [0-9]+\.[0-9]+\.[0-9]+" $SKILL_FILE | awk '{print $2}')
+          
+          # 2. 版本号自增 (Patch)
+          IFS='.' read -ra ADDR <<< "$CURRENT_VERSION"
+          NEW_VERSION="${ADDR[0]}.${ADDR[1]}.$((ADDR[2] + 1))"
+          echo "Updating version from $CURRENT_VERSION to $NEW_VERSION"
+          
+          # 3. 更新文件
+          sed -i "s/^version: $CURRENT_VERSION/version: $NEW_VERSION/" $SKILL_FILE
+          
+          # 4. 发布到 ClawHub
+          # 注意：假设 CLAWHUB_TOKEN 环境变量能被 CLI 识别，
+          # 如果 CLI 不直接支持环境变量，则需要先执行写入配置的操作：
+          mkdir -p ~/.clawhub
+          echo "{\"token\":\"$CLAWHUB_TOKEN\"}" > ~/.clawhub/config.json
+          
+          clawhub publish . --version "$NEW_VERSION"
+          
+          # 5. 将版本变更提交回仓库
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add $SKILL_FILE
+          git commit -m "chore: bump version to $NEW_VERSION [skip ci]"
+          git push
