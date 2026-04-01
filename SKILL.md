@@ -77,6 +77,13 @@ Apply for a key at: **https://account.methodalgo.com/account/api-keys**
 Verify the installation:
 ```bash
 methodalgo --version
+
+### 3. Maintenance & Updates
+If you encounter errors related to missing commands or outdated API responses, try updating the CLI tool:
+
+```bash
+methodalgo update
+```
 ```
 
 ---
