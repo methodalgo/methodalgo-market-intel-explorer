@@ -255,7 +255,7 @@ methodalgo signals <channel> --limit <N> --json
 ```json
 {
   "Symbol": "ZECUSDT.P", "Side": "🔴 SHORT / 🟢 LONG", "Quantity": "88.245", 
-  "Average Price": ".43", "Liquidation Price": ".70", "Position Total": ""
+  "Average Price": "$227.43", "Liquidation Price": "$229.70", "Position Total": "$20069"
 }
 ```
 3. **`exhaustion-*` series** (Buyer or seller exhaustion, potential trend reversal)
@@ -274,7 +274,7 @@ methodalgo signals <channel> --limit <N> --json
 5. **`etf-tracker`** (ETF fund flow broadcast)
 ```json
 {
-  "Net Inflow": "/bin/zshK", "7 Days Avg.": ".0K"
+  "Net Inflow": "$0K", "7 Days Avg.": "$663.0K"
 }
 ```
 6. **`market-today`** (Market sentiment, including Season Index and Fear & Greed Index)
@@ -298,9 +298,9 @@ methodalgo signals <channel> --limit <N> --json
       "progress": "40.91%", // Unlock progress
       "circSup": "6.79 B ICE", // Current circulating supply
       "countDown": "0Day23Hr30Min", // Countdown relative to updatedAt. Please calculate real-time using the ts and updatedAt in the data.
-      "marketCap": ".99 M", // Current market capitalization
+      "marketCap": "$218.99 M", // Current market capitalization
       "unlockToken": "32.21 M", // Number of tokens unlocked
-      "unlockTokenVal": ".36 M (1.52% of M.Cap)" // Value of tokens unlocked
+      "unlockTokenVal": "$3.36 M (1.52% of M.Cap)" // Value of tokens unlocked
     }
   ],
   "updatedAt": 1774915176617 // Data update time
