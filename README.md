@@ -19,7 +19,7 @@
 
 - **📰 Comprehensive News**: Supports deep-dive articles (`article`), real-time breaking news (`breaking`), on-chain monitoring (`onchain`), and institutional research reports (`report`).
 - **📡 Real-time Signals**: Includes High/Medium Timeframe Breakouts (`breakout`), Large Liquidations (`liquidation`), Buyer/Seller Exhaustion (`exhaustion`), and "Golden Pit" signals based on Smart Cloud patterns.
-- **📊 Market Data**: Provides token unlock countdowns, ETF fund flows, and daily market summaries (Fear & Greed Index).
+- **📊 Market Data**: Provides macroeconomic events (`calendar`), token unlock countdowns, ETF fund flows, and daily market summaries (Fear & Greed Index).
 - **📸 Instant Snapshots**: Fetch TradingView chart screenshots for any symbol at any time (supports Spot and Perpetual).
 - **🤖 AI-Friendly**: Outputs pure JSON structured data, making it easy for AI to extract key information.
 - **🧩 Smart Fetching**: Supports `--after` pagination, `--search` filtering, and time-window queries.
@@ -104,6 +104,12 @@ methodalgo signals breakout-mtf --limit 10 --json
 methodalgo snapshot SOLUSDT.P 60 --url --json
 ```
 
+### Fetch Economic Calendar And Results
+```bash
+# Get the latest US economic events
+methodalgo calendar --countries US --json
+```
+
 ---
 
 ## 🎯 Common Scenarios
@@ -115,6 +121,7 @@ methodalgo snapshot SOLUSDT.P 60 --url --json
 | **Mid-term Breakouts** | `methodalgo signals breakout-mtf --limit 10 --json` |
 | **Trend Reversals** | `methodalgo signals exhaustion-buyer --limit 5 --json` |
 | **Buy the Dip (Golden Pit)** | `methodalgo signals golden-pit-mtf --limit 5 --json` |
+| **Macro Events Econonmic calendar (realtime result)** | `methodalgo calendar --countries US,EU --json` |
 | **Get Chart Snapshot** | `methodalgo snapshot BTCUSDT.P 60 --url --json` |
 | **Check ETF Flows** | `methodalgo signals etf-tracker --limit 1 --json` |
 | **Token Unlocks** | `methodalgo signals token-unlock --limit 10 --json` |

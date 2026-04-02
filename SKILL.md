@@ -1,7 +1,7 @@
 ---
 name: methodalgo-market-intel-explorer
-version: 1.0.9
-description: Fetches cryptocurrency news, chart snapshots, macroeconomic events, and trading signals. Use this skill when the user wants to check the latest crypto news, market snapshots, chart screenshots, trading signals, token unlocks, ETF flows, Fear & Greed indices, and other market data.
+version: 1.1.0
+description: Fetches cryptocurrency news, chart snapshots, macroeconomic events data, and trading signals. Use this skill when the user wants to check the latest crypto news, market snapshots, chart screenshots, trading signals, token unlocks, ETF flows, Fear & Greed indices, and other market data.
 metadata:
   openclaw:
     requires:
@@ -77,14 +77,17 @@ Apply for a key at: **https://account.methodalgo.com/account/api-keys**
 Verify the installation:
 ```bash
 methodalgo --version
-
-### 3. Maintenance & Updates
-If you encounter errors related to missing commands or outdated API responses, try updating the CLI tool:
-
-```bash
-methodalgo update
 ```
-```
+
+### 3. Troubleshooting & Common Errors
+If you encounter errors, check the following:
+
+| Error Message | Solution |
+|---------------|----------|
+| **Authentication Required** | Run `methodalgo login` or set `METHODALGO_API_KEY` environment variable. |
+| **Command Not Found** | Ensure `methodalgo-cli` is installed: `npm install -g methodalgo-cli`. |
+| **Network Timeout** | Ensure your network can access `methodalgo.com`. |
+| **Outdated Results** | Update the CLI: `methodalgo update`. |
 
 ---
 
@@ -111,6 +114,9 @@ methodalgo signals <channel> --limit <N> --json
 
 # Snapshot
 methodalgo snapshot <symbol> [tf] --url --json
+
+# Calendar
+methodalgo calendar --countries <codes> [options] --json
 ```
 
 ---
@@ -212,8 +218,7 @@ methodalgo signals <channel> --limit <N> --json
 | `etf-tracker` | Daily BTC/ETH/SOL/XRP ETF fund inflows and outflows | Daily |
 | `market-today` | Altcoin Season Index + Fear & Greed Index | Daily |
 
-### Output Structure
-
+### Standard Output Structure
 **Standard Signal Channels** (breakout / liquidation / exhaustion / golden-pit / etf-tracker / market-today):
 
 ```json
@@ -237,7 +242,7 @@ methodalgo signals <channel> --limit <N> --json
 ]
 ```
 
-**`details` Structure Enumeration for Standard Channels:**
+#### `details` Structure Enumeration for Standard Channels:
 
 1. **`breakout-*` series** (Detecting breakout trading opportunities)
 ```json
@@ -250,7 +255,7 @@ methodalgo signals <channel> --limit <N> --json
 ```json
 {
   "Symbol": "ZECUSDT.P", "Side": "🔴 SHORT / 🟢 LONG", "Quantity": "88.245", 
-  "Average Price": "$227.43", "Liquidation Price": "$229.70", "Position Total": "$20069"
+  "Average Price": ".43", "Liquidation Price": ".70", "Position Total": ""
 }
 ```
 3. **`exhaustion-*` series** (Buyer or seller exhaustion, potential trend reversal)
@@ -269,7 +274,7 @@ methodalgo signals <channel> --limit <N> --json
 5. **`etf-tracker`** (ETF fund flow broadcast)
 ```json
 {
-  "Net Inflow": "$0K", "7 Days Avg.": "$663.0K"
+  "Net Inflow": "/bin/zshK", "7 Days Avg.": ".0K"
 }
 ```
 6. **`market-today`** (Market sentiment, including Season Index and Fear & Greed Index)
@@ -280,6 +285,7 @@ methodalgo signals <channel> --limit <N> --json
 { "Yesterday": "12", "3Days Ago": "10", "7Days Ago": "10" }
 ```
 
+#### `token-unlock` Channel Structure
 **`token-unlock` channel** (Unique data structure with a `signals` array at the top level):
 
 ```json
@@ -292,9 +298,9 @@ methodalgo signals <channel> --limit <N> --json
       "progress": "40.91%", // Unlock progress
       "circSup": "6.79 B ICE", // Current circulating supply
       "countDown": "0Day23Hr30Min", // Countdown relative to updatedAt. Please calculate real-time using the ts and updatedAt in the data.
-      "marketCap": "$218.99 M", // Current market capitalization
+      "marketCap": ".99 M", // Current market capitalization
       "unlockToken": "32.21 M", // Number of tokens unlocked
-      "unlockTokenVal": "$3.36 M (1.52% of M.Cap)" // Value of tokens unlocked
+      "unlockTokenVal": ".36 M (1.52% of M.Cap)" // Value of tokens unlocked
     }
   ],
   "updatedAt": 1774915176617 // Data update time
@@ -302,6 +308,44 @@ methodalgo signals <channel> --limit <N> --json
 ```
 
 ---
+
+## 📅 Calendar Command
+
+```bash
+methodalgo calendar --countries <codes> [options] --json
+```
+
+### Parameter Description
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `--countries` | **(Required)** Comma-separated ISO country codes | `--countries US,EU,CN` |
+| `--from` | Start date (Default: 2 days ago) | `--from 2026-03-20` |
+| `--to` | End date (Default: 2 days later) | `--to 2026-03-30` |
+| `--json` | Outputs structured JSON data | `--json` |
+
+### Output Structure
+
+```json
+ [
+   {
+     "title": "Non Farm Payrolls",
+     "country": "US",
+     "indicator": "Jobs",
+     "period": "Mar",
+     "comment": "Nonfarm Payrolls measures the change in the number of people employed during the previous month, excluding the farming industry...",
+     "actual": "275K",
+     "forecast": "198K",
+     "previous": "229K",
+     "importance": 1,
+     "date": "2026-04-03T12:30:00.000Z",
+     "source": "Bureau of Labour Statistics",
+     "source_url": "http://www.bls.gov"
+   }
+ ]
+ ```
+
+ ---
 
 ## 🎯 Scenario Quick Look
 
@@ -316,6 +360,8 @@ methodalgo signals <channel> --limit <N> --json
 | Check global market sentiment | `methodalgo signals market-today --limit 5 --json` |
 | Check liquidation events | `methodalgo signals liquidation --limit 10 --json` |
 | Check Golden Pit signals | `methodalgo signals golden-pit-mtf --limit 10 --json` |
+| Check macroeconomic data (US) | `methodalgo calendar --countries US --json` |
+| Check upcoming macro events | `methodalgo calendar --countries US,EU,CN --from 2026-04-01 --json` |
 | Get chart snapshots | `methodalgo snapshot BTCUSDT.P 60 --url --json` |
 | Incremental fetch for more signals (except token-unlock) | `methodalgo signals <channel> --limit 100 --after "msgId" --json` |
 
@@ -331,6 +377,7 @@ methodalgo signals <channel> --limit <N> --json
 4. **Language Handling**: For news data, prioritize `title.zh` / `excerpt.zh` / `analysis.zh` fields for Chinese content (if requested).
 5. **Structural Inconsistency Alert**: `token-unlock` returns an object (containing a `signals` array), while other channels return an array. The AI must determine processing logic based on the `channel`.
 6. **Snapshot Screenshots**: `snapshot` returns image links via `--url` by default. Please access the visualized market charts through these links. 
+7. **Authentication Failure**: If commands fail with 401/403 errors, verify your API key at **https://account.methodalgo.com/account/api-keys** and re-run `methodalgo login`.
 
 > Github: https://github.com/methodalgo/methodalgo-market-intel-explorer
 > ClawHub: https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer
