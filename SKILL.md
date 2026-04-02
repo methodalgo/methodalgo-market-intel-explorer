@@ -1,6 +1,6 @@
 ---
 name: methodalgo-market-intel-explorer
-version: 1.1.0
+version: 1.1.1
 description: Fetches cryptocurrency news, chart snapshots, macroeconomic events data, and trading signals. Use this skill when the user wants to check the latest crypto news, market snapshots, chart screenshots, trading signals, token unlocks, ETF flows, Fear & Greed indices, and other market data.
 metadata:
   openclaw:
