@@ -1,12 +1,13 @@
 ---
 name: methodalgo-market-intel-explorer
-version: 1.1.1
+version: 1.2.0
 description: Fetches cryptocurrency news, chart snapshots, macroeconomic events data, federal reserve indicators (FRED), and trading signals. Use this skill when the user wants to check the latest crypto news, market snapshots, chart screenshots, trading signals, token unlocks, ETF flows, Fear & Greed indices, and macro-economic data (GDP, CPI, Liquidity, etc.).
 metadata:
   openclaw:
     requires:
       env:
-        - METHODALGO_API_KEY # Recommended for non-interactive AI environments (Highest Priority)
+        - METHODALGO_API_KEY
+        - FRED_API_KEY
       bins:
         - methodalgo
       anyBins:
@@ -23,6 +24,9 @@ credentials:
   - name: METHODALGO_API_KEY
     description: API key for the Methodalgo service. Obtain one at https://account.methodalgo.com/account/api-keys
     required: true
+  - name: FRED_API_KEY
+    description: (Optional) Your personal FRED API key for higher rate limits on macro data. Get one at https://fred.stlouisfed.org/docs/api/api_key.html
+    required: false
 provenance:
   cli: https://www.npmjs.com/package/methodalgo-cli
   source: https://github.com/methodalgo/methodalgo-market-intel-explorer
