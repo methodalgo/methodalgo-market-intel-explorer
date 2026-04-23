@@ -110,6 +110,15 @@ methodalgo snapshot SOLUSDT.P 60 --url --json
 methodalgo calendar --countries US --json
 ```
 
+### Fetch Macro Data (FRED)
+```bash
+# Get the global macro dashboard
+methodalgo fred dashboard --json
+
+# Analyze net liquidity trend
+methodalgo fred liquidity --lookback 1y --json
+```
+
 ---
 
 ## 🎯 Common Scenarios
@@ -121,6 +130,9 @@ methodalgo calendar --countries US --json
 | **Mid-term Breakouts** | `methodalgo signals breakout-mtf --limit 10 --json` |
 | **Trend Reversals** | `methodalgo signals exhaustion-buyer --limit 5 --json` |
 | **Buy the Dip (Golden Pit)** | `methodalgo signals golden-pit-mtf --limit 5 --json` |
+| **Macro Analysis (FRED)** | `methodalgo fred dashboard --json` |
+| **Liquidity & BTC Pivot** | `methodalgo fred liquidity --lookback 1y --json` |
+| **Recession Warning** | `methodalgo fred recession --json` |
 | **Macro Events Econonmic calendar (realtime result)** | `methodalgo calendar --countries US,EU --json` |
 | **Get Chart Snapshot** | `methodalgo snapshot BTCUSDT.P 60 --url --json` |
 | **Check ETF Flows** | `methodalgo signals etf-tracker --limit 1 --json` |
