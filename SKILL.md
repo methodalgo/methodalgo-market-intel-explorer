@@ -1,7 +1,7 @@
 ---
 name: methodalgo-market-intel-explorer
-version: 1.2.0
-description: Fetches cryptocurrency news, chart snapshots, macroeconomic events data, federal reserve indicators (FRED), and trading signals. Use this skill when the user wants to check the latest crypto news, market snapshots, chart screenshots, trading signals, token unlocks, ETF flows, Fear & Greed indices, and macro-economic data (GDP, CPI, Liquidity, etc.).
+version: 1.3.0
+description: Fetches cryptocurrency news, Binance public market data, chart snapshots, macroeconomic events data, federal reserve indicators (FRED), and trading signals. Use this skill when the user wants to check the latest crypto news, Binance spot/futures prices, 24h movers, order books, OHLCV klines, futures funding, open interest, long/short ratios, market snapshots, chart screenshots, trading signals, token unlocks, ETF flows, Fear & Greed indices, and macro-economic data (GDP, CPI, Liquidity, etc.).
 metadata:
   openclaw:
     requires:
@@ -29,6 +29,7 @@ credentials:
     required: false
 provenance:
   cli: https://www.npmjs.com/package/methodalgo-cli
+  minCliVersion: 1.0.26
   source: https://github.com/methodalgo/methodalgo-market-intel-explorer
   registry: https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer
 ---
@@ -62,7 +63,9 @@ This skill relies on the `methodalgo-cli`, an **open-source npm package** ([npmj
 npm install -g methodalgo-cli
 ```
 
-### 2. Authentication (Required)
+### 2. Authentication
+Most Methodalgo service commands (`news`, `signals`, `snapshot`, `calendar`, and Methodalgo-backed data) require a Methodalgo API key. Binance public market data commands (`methodalgo binance ...`) do not require a Methodalgo API key or a Binance API key.
+
 The CLI supports two authentication methods. **The CLI will prioritize the environment variable over the local config.**
 
 #### Method A: Environment Variable (Recommended for AI Agents)
@@ -90,6 +93,7 @@ If you encounter errors, check the following:
 |---------------|----------|
 | **Authentication Required** | Run `methodalgo login` or set `METHODALGO_API_KEY` environment variable. |
 | **Command Not Found** | Ensure `methodalgo-cli` is installed: `npm install -g methodalgo-cli`. |
+| **Binance command missing** | Update the CLI to `methodalgo-cli` v1.0.26 or newer: `methodalgo update` or reinstall with `npm install -g methodalgo-cli`. |
 | **Network Timeout** | Ensure your network can access `methodalgo.com`. |
 | **Outdated Results** | Update the CLI: `methodalgo update`. |
 
@@ -101,7 +105,7 @@ To execute tasks more accurately, it is recommended to refer to the following do
 
 - **[Signal Channels Detailed Reference](./references/signal-channels.md)**: Detailed explanation of the trigger mechanisms, timeframes, and `details` field meanings for various signal channels (Breakout, Exhaustion, Golden Pit, etc.).
 - **[AI Prompts Guide](./references/ai-prompts.md)**: Provides prompt templates for scenarios such as "Daily Market Overview" and "Specific Coin Deep Scan".
-- **[Data Output Samples](./references/sample-output.md)**: Shows real JSON response structures for news, signals, and snapshot commands to facilitate parsing logic.
+- **[Data Output Samples](./references/sample-output.md)**: Shows real JSON response structures for news, signals, snapshot, macro, and Binance public market data commands to facilitate parsing logic.
 
 ---
 
@@ -124,6 +128,9 @@ methodalgo calendar --countries <codes> [options] --json
 
 # Federal Reserve Data (FRED)
 methodalgo fred <subcommand> [options] --json
+
+# Binance public market data (no API key required)
+methodalgo binance <subcommand> [options] --json
 ```
 
 ---
@@ -415,6 +422,65 @@ methodalgo fred <subcommand> [options] --json
 
 ---
 
+## 🟡 Binance Public Market Data Command
+
+Access Binance spot and USD-M futures public market data through `methodalgo binance`. These commands do **not** require a Binance API key, but they do require `methodalgo-cli` version `1.0.26` or newer.
+
+```bash
+methodalgo binance <subcommand> [options] --json
+```
+
+### Symbol Convention
+
+| Input Symbol | Market | Meaning |
+|--------------|--------|---------|
+| `BTCUSDT` | Spot | Binance spot symbol |
+| `BTCUSDT.P` | USD-M Futures | Binance perpetual futures symbol; the CLI sends `BTCUSDT` to Binance futures APIs |
+
+`--market auto|spot|futures` is available where supported:
+- `auto` uses the `.P` suffix to infer spot vs futures.
+- Explicit `--market spot` or `--market futures` overrides the suffix.
+- List-style commands without a symbol, such as `ticker` and `movers`, default to spot unless `--market futures` is provided.
+
+### Subcommands
+
+| Subcommand | Description | Example |
+|------------|-------------|---------|
+| `price <symbol>` | Latest price, 24h change, high/low, and quote volume | `methodalgo binance price BTCUSDT.P --json` |
+| `ticker [symbol]` | 24h ticker stats for one symbol or high-volume USDT pairs | `methodalgo binance ticker BTCUSDT --json` |
+| `movers` | 24h gainers and losers for spot or futures | `methodalgo binance movers --market futures --limit 10 --json` |
+| `book <symbol>` | Order book depth | `methodalgo binance book ETHUSDT.P --limit 20 --json` |
+| `trades <symbol>` | Recent market trades | `methodalgo binance trades SOLUSDT --limit 20 --json` |
+| `klines <symbol>` | OHLCV candlesticks | `methodalgo binance klines BTCUSDT.P --interval 15m --limit 100 --json` |
+| `funding <symbol>` | USD-M futures funding rate and mark/index price | `methodalgo binance funding BTCUSDT.P --limit 8 --json` |
+| `oi <symbol>` | USD-M futures open interest and recent OI history | `methodalgo binance oi BTCUSDT.P --period 5m --limit 12 --json` |
+| `sentiment <symbol>` | USD-M futures long/short ratios and taker buy/sell ratio | `methodalgo binance sentiment BTCUSDT.P --period 5m --limit 12 --json` |
+| `basis <symbol>` | USD-M futures basis and basis rate | `methodalgo binance basis BTCUSDT.P --period 5m --limit 12 --json` |
+| `exchange-info [symbol]` | Symbol rules and exchange metadata | `methodalgo binance exchange-info BTCUSDT.P --json` |
+| `raw <path>` | Allowlisted public endpoint passthrough | `methodalgo binance raw /fapi/v1/openInterest -p symbol=BTCUSDT --json` |
+
+### Parameters
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `--market` | `auto`, `spot`, or `futures` where supported | `--market futures` |
+| `--limit` | Number of rows for table views or Binance request limit when supported | `--limit 20` |
+| `--interval` | Kline interval | `--interval 15m` |
+| `--period` | Futures statistics period (`5m`, `15m`, `1h`, `4h`, `1d`, etc.) | `--period 5m` |
+| `--min-volume` | Minimum quote volume for movers filtering | `--min-volume 1000000` |
+| `-p, --param` | Raw endpoint query parameter | `-p symbol=BTCUSDT` |
+| `--json` | Outputs JSON data | `--json` |
+
+### Important Parsing Notes
+
+- `--json` usually returns the direct Binance API response. Do not assume it has the same wrapper shape across subcommands.
+- `ticker --limit` limits the formatted table output; with `--json`, the raw Binance response is returned.
+- `movers` returns a normalized object with `{ market, gainers, losers, timestamp }`, because it is computed by the CLI from Binance 24h ticker data.
+- `funding`, `oi`, `sentiment`, and `basis` are futures-only. `BTCUSDT` and `BTCUSDT.P` both resolve to the same USD-M futures symbol for these commands.
+- `raw` is restricted to allowlisted public endpoints that do not require API keys. Account, order, trading, user-data, and signed endpoints are intentionally blocked.
+
+---
+
 ## 🎯 Scenario Quick Look
 
 | User Intent | Command |
@@ -438,6 +504,13 @@ methodalgo fred <subcommand> [options] --json
 | Compare 10Y and 2Y Treasury (Recession Warning) | `methodalgo fred spread T10Y2Y,T10Y3M --json` |
 | Search for specific economic data (e.g. Gold) | `methodalgo fred search 'Gold London Fix' --json` |
 | Get specific macro indicator (e.g. CPI) | `methodalgo fred latest CPIAUCSL --json` |
+| Check Binance spot price and 24h change | `methodalgo binance price BTCUSDT --json` |
+| Check Binance futures price and 24h change | `methodalgo binance price BTCUSDT.P --json` |
+| Compare Binance 24h movers | `methodalgo binance movers --market futures --limit 10 --json` |
+| Fetch Binance futures klines | `methodalgo binance klines BTCUSDT.P --interval 15m --limit 100 --json` |
+| Check Binance futures funding | `methodalgo binance funding BTCUSDT.P --limit 8 --json` |
+| Check Binance futures open interest | `methodalgo binance oi BTCUSDT.P --period 5m --limit 12 --json` |
+| Check Binance futures sentiment | `methodalgo binance sentiment BTCUSDT.P --period 5m --limit 12 --json` |
 | Get chart snapshots | `methodalgo snapshot BTCUSDT.P 60 --url --json` |
 | Incremental fetch for more signals (except token-unlock) | `methodalgo signals <channel> --limit 100 --after "msgId" --json` |
 
@@ -453,8 +526,9 @@ methodalgo fred <subcommand> [options] --json
 4. **Language Handling**: For news data, prioritize `title.zh` / `excerpt.zh` / `analysis.zh` fields for Chinese content (if requested).
 5. **Structural Inconsistency Alert**: `token-unlock` returns an object (containing a `signals` array), while other channels return an array. The AI must determine processing logic based on the `channel`.
 6. **Snapshot Screenshots**: `snapshot` returns image links via `--url` by default. Please access the visualized market charts through these links. 
-7. **Authentication Failure**: If commands fail with 401/403 errors, verify your API key at **https://account.methodalgo.com/account/api-keys** and re-run `methodalgo login`.
+7. **Authentication Failure**: If Methodalgo service commands fail with 401/403 errors, verify your API key at **https://account.methodalgo.com/account/api-keys** and re-run `methodalgo login`. Binance public data commands do not use this API key.
 8. **FRED API Key**: While Methodalgo provides macro data, you can set your own FRED key for higher limits: `methodalgo config set fred-api-key <key>`.
+9. **Binance Public Data**: `methodalgo binance` uses public Binance endpoints and does not require a Binance API key. Use `.P` symbols for futures when available, and use `--market futures` for list-style futures queries.
 
 > Github: https://github.com/methodalgo/methodalgo-market-intel-explorer
 > ClawHub: https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer

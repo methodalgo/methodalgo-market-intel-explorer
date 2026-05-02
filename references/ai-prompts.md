@@ -29,7 +29,8 @@ This document provides a series of optimized prompt examples designed to help AI
 > I need to perform a deep scan for SOL:
 > 1. Search for the latest 10 news items about SOL: `news --type article --search 'SOL' --limit 10`.
 > 2. Check for any MTF breakout signals for SOL: `signals breakout-mtf --limit 200` and filter for SOL-related items.
-> 3. Get a 1-hour chart snapshot for SOLUSDT.P: `snapshot SOLUSDT.P 60 --url`.
+> 3. Check Binance futures market data: `methodalgo binance price SOLUSDT.P --json`, `methodalgo binance funding SOLUSDT.P --json`, and `methodalgo binance oi SOLUSDT.P --period 5m --limit 12 --json`.
+> 4. Get a 1-hour chart snapshot for SOLUSDT.P: `snapshot SOLUSDT.P 60 --url`.
 >
 > Integrate the above information to determine the current short-term trend for SOL.
 
@@ -68,6 +69,25 @@ This document provides a series of optimized prompt examples designed to help AI
 > 
 > Summarize the key findings and how they might affect the Dollar Index (DXY) and cryptocurrency markets.
 
+### 7. Binance Market Microstructure Scan
+**Prompt**:
+> Use the `methodalgo-market-intel-explorer` skill to analyze BTC futures market structure:
+> 1. Fetch price and 24h stats: `methodalgo binance price BTCUSDT.P --json`.
+> 2. Fetch recent 15m futures klines: `methodalgo binance klines BTCUSDT.P --interval 15m --limit 100 --json`.
+> 3. Fetch funding and open interest: `methodalgo binance funding BTCUSDT.P --json` and `methodalgo binance oi BTCUSDT.P --period 5m --limit 12 --json`.
+> 4. Fetch futures sentiment: `methodalgo binance sentiment BTCUSDT.P --period 5m --limit 12 --json`.
+>
+> Summarize whether leverage is building, whether funding is crowded, and whether taker flow confirms or contradicts price action.
+
+### 8. Binance Movers Discovery
+**Prompt**:
+> Find unusual Binance market movers:
+> 1. Fetch spot movers: `methodalgo binance movers --market spot --limit 10 --json`.
+> 2. Fetch futures movers: `methodalgo binance movers --market futures --limit 10 --json`.
+> 3. For the top 3 futures gainers and losers, fetch `price`, `funding`, and `oi`.
+>
+> Return a compact watchlist with symbol, 24h change, quote volume, funding, OI trend, and whether the move looks spot-led or leverage-led.
+
 ---
 
 ## 🛠️ Troubleshooting for AI
@@ -81,3 +101,7 @@ This document provides a series of optimized prompt examples designed to help AI
 
 - **If context overflow occurs**:
   - *Solution*: Reduce the `--limit` from 50 to 10, or use more specific `--search` keywords for exact matches.
+
+- **If Binance spot/futures data appears mixed up**:
+  - *Cause*: Spot and futures use the same base symbol on Binance, while this skill uses `.P` as the futures convention.
+  - *Solution*: Use `BTCUSDT` for spot and `BTCUSDT.P` for USD-M futures. For list-style commands such as `movers`, specify `--market futures` explicitly when futures data is required.

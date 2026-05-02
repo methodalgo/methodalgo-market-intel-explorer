@@ -1,6 +1,6 @@
 # 🛠️ Methodalgo Market Intel Explorer
 
-`methodalgo-market-intel-explorer` is a market intelligence exploration skill specifically designed for AI agents (such as Claude). Through the integrated `methodalgo` CLI, it captures real-time cryptocurrency news, macroeconomic events, trading signals, ETF fund flows, and market sentiment indicators.
+`methodalgo-market-intel-explorer` is a market intelligence exploration skill specifically designed for AI agents (such as Claude). Through the integrated `methodalgo` CLI, it captures real-time cryptocurrency news, Binance spot/futures public market data, macroeconomic events, trading signals, ETF fund flows, and market sentiment indicators.
 
 ---
 
@@ -20,6 +20,7 @@
 - **📰 Comprehensive News**: Supports deep-dive articles (`article`), real-time breaking news (`breaking`), on-chain monitoring (`onchain`), and institutional research reports (`report`).
 - **📡 Real-time Signals**: Includes High/Medium Timeframe Breakouts (`breakout`), Large Liquidations (`liquidation`), Buyer/Seller Exhaustion (`exhaustion`), and "Golden Pit" signals based on Smart Cloud patterns.
 - **📊 Market Data**: Provides macroeconomic events (`calendar`), token unlock countdowns, ETF fund flows, and daily market summaries (Fear & Greed Index).
+- **🟡 Binance Public Data**: Queries Binance spot/futures prices, 24h movers, order books, klines, futures funding, open interest, basis, and long/short sentiment without a Binance API key.
 - **📸 Instant Snapshots**: Fetch TradingView chart screenshots for any symbol at any time (supports Spot and Perpetual).
 - **🤖 AI-Friendly**: Outputs pure JSON structured data, making it easy for AI to extract key information.
 - **🧩 Smart Fetching**: Supports `--after` pagination, `--search` filtering, and time-window queries.
@@ -68,7 +69,7 @@ This skill relies on the `methodalgo` CLI — an **open-source npm package** ([n
 npm install -g methodalgo-cli
 ```
 
-**API Key Required**: CLI commands are authenticated with a Methodalgo API key.
+**API Key Required for Methodalgo Service Data**: News, signals, snapshots, calendar, and Methodalgo-backed data commands are authenticated with a Methodalgo API key. Binance public market data commands (`methodalgo binance ...`) do not require a Methodalgo API key or a Binance API key.
 
 > 🔑 **Apply for an API key**: [https://account.methodalgo.com/account/api-keys](https://account.methodalgo.com/account/api-keys)
 
@@ -119,6 +120,21 @@ methodalgo fred dashboard --json
 methodalgo fred liquidity --lookback 1y --json
 ```
 
+### Fetch Binance Public Market Data
+```bash
+# Spot price and 24h stats
+methodalgo binance price BTCUSDT --json
+
+# USD-M futures price and 24h stats (.P means perpetual futures)
+methodalgo binance price BTCUSDT.P --json
+
+# Futures movers and leverage context
+methodalgo binance movers --market futures --limit 10 --json
+methodalgo binance funding BTCUSDT.P --json
+methodalgo binance oi BTCUSDT.P --period 5m --limit 12 --json
+methodalgo binance sentiment BTCUSDT.P --period 5m --limit 12 --json
+```
+
 ---
 
 ## 🎯 Common Scenarios
@@ -134,6 +150,10 @@ methodalgo fred liquidity --lookback 1y --json
 | **Liquidity & BTC Pivot** | `methodalgo fred liquidity --lookback 1y --json` |
 | **Recession Warning** | `methodalgo fred recession --json` |
 | **Macro Events Econonmic calendar (realtime result)** | `methodalgo calendar --countries US,EU --json` |
+| **Binance Spot Price** | `methodalgo binance price BTCUSDT --json` |
+| **Binance Futures Price** | `methodalgo binance price BTCUSDT.P --json` |
+| **Binance Futures Movers** | `methodalgo binance movers --market futures --limit 10 --json` |
+| **Binance Futures Funding/OI** | `methodalgo binance funding BTCUSDT.P --json` + `methodalgo binance oi BTCUSDT.P --period 5m --json` |
 | **Get Chart Snapshot** | `methodalgo snapshot BTCUSDT.P 60 --url --json` |
 | **Check ETF Flows** | `methodalgo signals etf-tracker --limit 1 --json` |
 | **Token Unlocks** | `methodalgo signals token-unlock --limit 10 --json` |
@@ -144,6 +164,7 @@ methodalgo fred liquidity --lookback 1y --json
 ## ⚠️ Important Notes
 - The `--limit` parameter controls the number of items returned; please set it reasonably based on the context window size. Avoid a limit that is too small (missing data) or too large (consuming excessive context).
 - For the `token-unlock` channel, the root of the JSON response contains a `signals` array, which is slightly different from other channels.
+- For Binance commands, use `BTCUSDT` for spot and `BTCUSDT.P` for USD-M perpetual futures. List-style Binance commands such as `movers` require `--market futures` when futures data is needed.
 
 ---
 

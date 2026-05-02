@@ -368,4 +368,231 @@ methodalgo calendar --countries US --json
 
 ---
 
+## 🟡 Binance Public Market Data (binance)
+
+### Symbol Convention
+- `BTCUSDT` means Binance spot.
+- `BTCUSDT.P` means Binance USD-M perpetual futures. The CLI strips `.P` before calling Binance futures APIs.
+- `--json` usually returns the direct Binance API response. `movers` is the main normalized exception.
+
+### 1. binance price
+```bash
+methodalgo binance price BTCUSDT.P --json
+```
+
+```json
+{
+  "market": "futures",
+  "symbol": "BTCUSDT",
+  "price": "78622.90",
+  "changePercent": "0.568",
+  "quoteVolume": "4088851853.07",
+  "high": "79145.00",
+  "low": "77979.30",
+  "closeTime": 1777761732220
+}
+```
+
+### 2. binance ticker
+```bash
+methodalgo binance ticker BTCUSDT --json
+```
+
+```json
+{
+  "symbol": "BTCUSDT",
+  "priceChange": "418.47000000",
+  "priceChangePercent": "0.535",
+  "weightedAvgPrice": "78382.18177838",
+  "lastPrice": "78655.88000000",
+  "highPrice": "79199.48000000",
+  "lowPrice": "78040.00000000",
+  "volume": "6170.12345600",
+  "quoteVolume": "485322491.33660970",
+  "openTime": 1777675456965,
+  "closeTime": 1777761856965,
+  "count": 6267987
+}
+```
+
+### 3. binance movers
+```bash
+methodalgo binance movers --market futures --limit 2 --json
+```
+
+```json
+{
+  "market": "futures",
+  "gainers": [
+    {
+      "symbol": "LABUSDT",
+      "pctChange": 126.314,
+      "price": "2.17",
+      "rawPrice": 2.1656,
+      "quoteVolume": 125000000,
+      "volumeLabel": "$125.0M",
+      "rankType": "gainer",
+      "direction": "bull"
+    }
+  ],
+  "losers": [
+    {
+      "symbol": "TOKENUSDT",
+      "pctChange": -18.24,
+      "price": "0.45",
+      "rawPrice": 0.45,
+      "quoteVolume": 32000000,
+      "volumeLabel": "$32.0M",
+      "rankType": "loser",
+      "direction": "bear"
+    }
+  ],
+  "timestamp": "2026-05-02T22:44:00.000Z"
+}
+```
+
+### 4. binance book
+```bash
+methodalgo binance book BTCUSDT.P --limit 5 --json
+```
+
+```json
+{
+  "lastUpdateId": 10457834571765,
+  "E": 1777761857095,
+  "T": 1777761857085,
+  "bids": [["78619.90", "6.496"], ["78619.80", "0.240"]],
+  "asks": [["78620.00", "1.250"], ["78620.10", "3.811"]]
+}
+```
+
+### 5. binance klines
+```bash
+methodalgo binance klines BTCUSDT.P --interval 1m --limit 2 --json
+```
+
+```json
+[
+  [
+    1777761780000,
+    "78620.00",
+    "78620.10",
+    "78610.10",
+    "78619.00",
+    "15.614",
+    1777761839999,
+    "1227490.12",
+    312,
+    "8.200",
+    "644683.00",
+    "0"
+  ]
+]
+```
+
+### 6. binance funding
+```bash
+methodalgo binance funding BTCUSDT.P --limit 2 --json
+```
+
+```json
+{
+  "premium": {
+    "symbol": "BTCUSDT",
+    "markPrice": "78620.00000000",
+    "indexPrice": "78658.48065217",
+    "lastFundingRate": "0.00002210",
+    "nextFundingTime": 1777766400000
+  },
+  "history": [
+    {
+      "symbol": "BTCUSDT",
+      "fundingRate": "-0.00005278",
+      "fundingTime": 1777737600000,
+      "markPrice": "78181.60000000"
+    }
+  ]
+}
+```
+
+### 7. binance oi
+```bash
+methodalgo binance oi BTCUSDT.P --period 5m --limit 2 --json
+```
+
+```json
+{
+  "current": {
+    "symbol": "BTCUSDT",
+    "openInterest": "102039.216",
+    "time": 1777761857377
+  },
+  "history": [
+    {
+      "symbol": "BTCUSDT",
+      "sumOpenInterest": "102017.81400000",
+      "sumOpenInterestValue": "8030000000.00000000",
+      "timestamp": 1777761300000
+    }
+  ]
+}
+```
+
+### 8. binance sentiment
+```bash
+methodalgo binance sentiment BTCUSDT.P --period 5m --limit 2 --json
+```
+
+```json
+{
+  "globalRatio": [
+    {
+      "symbol": "BTCUSDT",
+      "longAccount": "0.3749",
+      "longShortRatio": "0.5997",
+      "shortAccount": "0.6251",
+      "timestamp": 1777761300000
+    }
+  ],
+  "topAccount": [],
+  "topPosition": [],
+  "taker": []
+}
+```
+
+### 9. binance basis
+```bash
+methodalgo binance basis BTCUSDT.P --period 5m --limit 2 --json
+```
+
+```json
+[
+  {
+    "indexPrice": "78623.42175000",
+    "contractType": "PERPETUAL",
+    "basisRate": "-0.0004",
+    "futuresPrice": "78589.90",
+    "basis": "-33.52175000",
+    "timestamp": 1777761000000
+  }
+]
+```
+
+### 10. binance raw
+```bash
+methodalgo binance raw /fapi/v1/openInterest -p symbol=BTCUSDT --json
+```
+
+```json
+{
+  "symbol": "BTCUSDT",
+  "openInterest": "102039.216",
+  "time": 1777761857377
+}
+```
+
+> **Safety**: `raw` only permits allowlisted public endpoints that do not require API keys. Account, order, trading, user-data, and signed endpoints are intentionally blocked.
+
+---
+
 💡 *Note: All timestamps are in milliseconds or ISO format.*
