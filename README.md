@@ -81,6 +81,8 @@ methodalgo login   # follow the prompts to enter your API key
 
 The key is stored locally on your machine and is only used to authenticate requests to Methodalgo's own API.
 
+**Optional FRED API Key**: `FRED_API_KEY` is only needed when using `methodalgo fred ...` macro data commands. News, signals, snapshots, calendar, and Binance public data commands work without it.
+
 ---
 
 ## 📖 Usage Guide
