@@ -117,7 +117,7 @@ methodalgo calendar --countries US --json
 methodalgo fred dashboard --json
 
 # Analyze net liquidity trend
-methodalgo fred liquidity --lookback 1y --json
+methodalgo fred liquidity --tail 52 --json
 ```
 
 ### Fetch Binance Public Market Data
@@ -147,7 +147,7 @@ methodalgo binance sentiment BTCUSDT.P --period 5m --limit 12 --json
 | **Trend Reversals** | `methodalgo signals exhaustion-buyer --limit 5 --json` |
 | **Buy the Dip (Golden Pit)** | `methodalgo signals golden-pit-mtf --limit 5 --json` |
 | **Macro Analysis (FRED)** | `methodalgo fred dashboard --json` |
-| **Liquidity & BTC Pivot** | `methodalgo fred liquidity --lookback 1y --json` |
+| **Liquidity & BTC Pivot** | `methodalgo fred liquidity --tail 52 --json` |
 | **Recession Warning** | `methodalgo fred recession --json` |
 | **Macro Events Econonmic calendar (realtime result)** | `methodalgo calendar --countries US,EU --json` |
 | **Binance Spot Price** | `methodalgo binance price BTCUSDT --json` |

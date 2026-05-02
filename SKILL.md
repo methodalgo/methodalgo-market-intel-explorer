@@ -7,7 +7,6 @@ metadata:
     requires:
       env:
         - METHODALGO_API_KEY
-        - FRED_API_KEY
       bins:
         - methodalgo
       anyBins:
@@ -25,7 +24,7 @@ credentials:
     description: API key for the Methodalgo service. Obtain one at https://account.methodalgo.com/account/api-keys
     required: true
   - name: FRED_API_KEY
-    description: (Optional) Your personal FRED API key for higher rate limits on macro data. Get one at https://fred.stlouisfed.org/docs/api/api_key.html
+    description: Optional. Only required when using `methodalgo fred ...` macro data commands; news, signals, snapshots, calendar, and Binance public data work without it. Get one at https://fred.stlouisfed.org/docs/api/api_key.html
     required: false
 provenance:
   cli: https://www.npmjs.com/package/methodalgo-cli
@@ -71,6 +70,7 @@ The CLI supports two authentication methods. **The CLI will prioritize the envir
 #### Method A: Environment Variable (Recommended for AI Agents)
 Set the following environment variable in your system or IDE:
 - `METHODALGO_API_KEY`: Your Methodalgo API key.
+- `FRED_API_KEY` (optional): Only needed for `methodalgo fred ...` macro data commands. The rest of the CLI works without it.
 
 #### Method B: Local CLI Login (Classic)
 Run the following command and enter your key when prompted:
@@ -92,6 +92,7 @@ If you encounter errors, check the following:
 | Error Message | Solution |
 |---------------|----------|
 | **Authentication Required** | Run `methodalgo login` or set `METHODALGO_API_KEY` environment variable. |
+| **FRED API Key Required** | Set `FRED_API_KEY` only if the task needs `methodalgo fred ...`; non-FRED commands do not need this optional key. |
 | **Command Not Found** | Ensure `methodalgo-cli` is installed: `npm install -g methodalgo-cli`. |
 | **Binance command missing** | Update the CLI to `methodalgo-cli` v1.0.26 or newer: `methodalgo update` or reinstall with `npm install -g methodalgo-cli`. |
 | **Network Timeout** | Ensure your network can access `methodalgo.com`. |
@@ -416,8 +417,9 @@ methodalgo fred <subcommand> [options] --json
 
 | Parameter | Description | Example |
 |-----------|-------------|---------|
-| `--lookback` | Lookback window for trend analysis | `--lookback 5y` / `24m` / `365d` |
-| `--tail` | Show only the last N observations | `--tail 10` |
+| `--tail` | Show only the last N observations where supported; for `liquidity`, `--tail 52` approximates one year of weekly data | `--tail 52` |
+| `--m2` | Include M2 money supply context in liquidity output | `--m2` |
+| `--lookback` | Lookback window for `zscore` analysis | `--lookback 5y` / `24m` / `365d` |
 | `--json` | Outputs structured JSON data | `--json` |
 
 ---
@@ -498,7 +500,7 @@ methodalgo binance <subcommand> [options] --json
 | Check upcoming macro events | `methodalgo calendar --countries US,EU,CN --from 2026-04-01 --json` |
 | Check global macro dashboard | `methodalgo fred dashboard --json` |
 | Check US recession risk | `methodalgo fred recession --json` |
-| Analyze macro liquidity impact on BTC | `methodalgo fred liquidity --lookback 1y --json` |
+| Analyze macro liquidity impact on BTC | `methodalgo fred liquidity --tail 52 --json` |
 | Compare DXY and 10Y Yields | `methodalgo fred compare DTWEXBGS,DGS10 --json` |
 | Analyze Real Interest Rate impact | `methodalgo fred zscore REAINTRATREARAT10Y --json` |
 | Compare 10Y and 2Y Treasury (Recession Warning) | `methodalgo fred spread T10Y2Y,T10Y3M --json` |

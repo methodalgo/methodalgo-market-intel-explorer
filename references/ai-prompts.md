@@ -17,34 +17,34 @@ This document provides a series of optimized prompt examples designed to help AI
 ### 1. Daily Morning Report / Market Overview
 **Prompt**:
 > Please use the `methodalgo-market-intel-explorer` skill to generate a crypto market overview for me today.
-> 1. Call `signals market-today` to get the Fear & Greed Index and Altcoin Season metrics.
-> 2. Call `signals etf-tracker` to get the latest ETF fund flows.
-> 3. Call `news --type article --limit 50` to fetch 50 of today's deep-dive news articles.
-> 4. Call `news --type breaking --limit 50` to fetch the latest 50 important breaking news flashes.
+> 1. Call `methodalgo signals market-today --limit 5 --json` to get the Fear & Greed Index and Altcoin Season metrics.
+> 2. Call `methodalgo signals etf-tracker --limit 10 --json` to get the latest ETF fund flows.
+> 3. Call `methodalgo news --type article --limit 50 --json` to fetch 50 of today's deep-dive news articles.
+> 4. Call `methodalgo news --type breaking --limit 50 --json` to fetch the latest 50 important breaking news flashes.
 >
 > Combine the above data to analyze current market sentiment and potential risks in concise English.
 
 ### 2. Deep Scan for a Specific Symbol (e.g., SOL)
 **Prompt**:
 > I need to perform a deep scan for SOL:
-> 1. Search for the latest 10 news items about SOL: `news --type article --search 'SOL' --limit 10`.
-> 2. Check for any MTF breakout signals for SOL: `signals breakout-mtf --limit 200` and filter for SOL-related items.
+> 1. Search for the latest 10 news items about SOL: `methodalgo news --type article --search 'SOL' --limit 10 --json`.
+> 2. Check for any MTF breakout signals for SOL: `methodalgo signals breakout-mtf --limit 200 --json` and filter for SOL-related items.
 > 3. Check Binance futures market data: `methodalgo binance price SOLUSDT.P --json`, `methodalgo binance funding SOLUSDT.P --json`, and `methodalgo binance oi SOLUSDT.P --period 5m --limit 12 --json`.
-> 4. Get a 1-hour chart snapshot for SOLUSDT.P: `snapshot SOLUSDT.P 60 --url`.
+> 4. Get a 1-hour chart snapshot for SOLUSDT.P: `methodalgo snapshot SOLUSDT.P 60 --url --json`.
 >
 > Integrate the above information to determine the current short-term trend for SOL.
 
 ### 3. Monitoring Large Liquidations and Sentiment Reversal
 **Prompt**:
 > Analyze market anomalies for a given session:
-> 1. Fetch the latest 50 large liquidation records: `signals liquidation --limit 50`.
-> 2. Check for any `exhaustion-buyer` or `exhaustion-seller` reversal signals: `signals exhaustion-seller --limit 5`.
+> 1. Fetch the latest 50 large liquidation records: `methodalgo signals liquidation --limit 50 --json`.
+> 2. Check for any `exhaustion-buyer` or `exhaustion-seller` reversal signals: `methodalgo signals exhaustion-seller --limit 5 --json`.
 >  3. If any large liquidations (over $1M) or strong reversal signals are found, include the corresponding chart snapshot links and summarize the key findings.
 
 ### 4. Token Unlock Alerts
 **Prompt**:
 > Query upcoming important token unlock events:
-> Call `signals token-unlock --limit 1`.
+> Call `methodalgo signals token-unlock --limit 1 --json`.
 > Note: This command returns an object; please extract `symbol`, `perc` (unlock percentage), `countDown`, and `unlockTokenVal` (unlock value) from the `signals` array. `ts` is the scheduled unlock time.
 > Highlight projects with unlock proportions exceeding 1% of the circulating supply and analyze the potential downward pressure on price.
 
@@ -84,7 +84,7 @@ This document provides a series of optimized prompt examples designed to help AI
 > Find unusual Binance market movers:
 > 1. Fetch spot movers: `methodalgo binance movers --market spot --limit 10 --json`.
 > 2. Fetch futures movers: `methodalgo binance movers --market futures --limit 10 --json`.
-> 3. For the top 3 futures gainers and losers, fetch `price`, `funding`, and `oi`.
+> 3. For the top 3 futures gainers and losers, fetch `methodalgo binance price <SYMBOL>.P --json`, `methodalgo binance funding <SYMBOL>.P --json`, and `methodalgo binance oi <SYMBOL>.P --period 5m --limit 12 --json`.
 >
 > Return a compact watchlist with symbol, 24h change, quote volume, funding, OI trend, and whether the move looks spot-led or leverage-led.
 
