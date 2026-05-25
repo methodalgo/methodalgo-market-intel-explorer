@@ -1,7 +1,7 @@
 ---
 name: methodalgo-market-intel-explorer
-version: 1.3.0
-description: Fetches cryptocurrency news, Binance public market data, chart snapshots, macroeconomic events data, federal reserve indicators (FRED), and trading signals. Use this skill when the user wants to check the latest crypto news, Binance spot/futures prices, 24h movers, order books, OHLCV klines, futures funding, open interest, long/short ratios, market snapshots, chart screenshots, trading signals, token unlocks, ETF flows, Fear & Greed indices, and macro-economic data (GDP, CPI, Liquidity, etc.).
+version: 1.4.0
+description: Fetches cryptocurrency news, Binance public market data, chart snapshots, economic calendar data, server-side macro/FRED-derived indicators, crypto market totals, and trading signals. Use this skill when the user wants to check the latest crypto news, Binance spot/futures prices, 24h movers, order books, OHLCV klines, futures funding, open interest, long/short ratios, market snapshots, chart screenshots, trading signals, token unlocks, ETF flows, BTC/ETH dominance, total crypto market cap, Fear & Greed, Altseason Index, and macro-economic data (GDP, CPI, Liquidity, etc.).
 metadata:
   openclaw:
     requires:
@@ -23,12 +23,9 @@ credentials:
   - name: METHODALGO_API_KEY
     description: API key for the Methodalgo service. Obtain one at https://account.methodalgo.com/account/api-keys
     required: true
-  - name: FRED_API_KEY
-    description: Optional. Only required when using `methodalgo fred ...` macro data commands; news, signals, snapshots, calendar, and Binance public data work without it. Get one at https://fred.stlouisfed.org/docs/api/api_key.html
-    required: false
 provenance:
   cli: https://www.npmjs.com/package/methodalgo-cli
-  minCliVersion: 1.0.26
+  minCliVersion: 1.0.33
   source: https://github.com/methodalgo/methodalgo-market-intel-explorer
   registry: https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer
 ---
@@ -70,7 +67,6 @@ The CLI supports two authentication methods. **The CLI will prioritize the envir
 #### Method A: Environment Variable (Recommended for AI Agents)
 Set the following environment variable in your system or IDE:
 - `METHODALGO_API_KEY`: Your Methodalgo API key.
-- `FRED_API_KEY` (optional): Only needed for `methodalgo fred ...` macro data commands. The rest of the CLI works without it.
 
 #### Method B: Local CLI Login (Classic)
 Run the following command and enter your key when prompted:
@@ -92,8 +88,8 @@ If you encounter errors, check the following:
 | Error Message | Solution |
 |---------------|----------|
 | **Authentication Required** | Run `methodalgo login` or set `METHODALGO_API_KEY` environment variable. |
-| **FRED API Key Required** | Set `FRED_API_KEY` only if the task needs `methodalgo fred ...`; non-FRED commands do not need this optional key. |
 | **Command Not Found** | Ensure `methodalgo-cli` is installed: `npm install -g methodalgo-cli`. |
+| **macro/totals command missing** | Update the CLI to `methodalgo-cli` v1.0.33 or newer: `methodalgo update` or reinstall with `npm install -g methodalgo-cli`. |
 | **Binance command missing** | Update the CLI to `methodalgo-cli` v1.0.26 or newer: `methodalgo update` or reinstall with `npm install -g methodalgo-cli`. |
 | **Network Timeout** | Ensure your network can access `methodalgo.com`. |
 | **Outdated Results** | Update the CLI: `methodalgo update`. |
@@ -127,8 +123,11 @@ methodalgo snapshot <symbol> [tf] --url --json
 # Calendar
 methodalgo calendar --countries <codes> [options] --json
 
-# Federal Reserve Data (FRED)
-methodalgo fred <subcommand> [options] --json
+# Macro data
+methodalgo macro <subcommand> [options] --json
+
+# Crypto market totals
+methodalgo totals [metric] [options] --json
 
 # Binance public market data (no API key required)
 methodalgo binance <subcommand> [options] --json
@@ -231,7 +230,7 @@ methodalgo signals <channel> --limit <N> --json
 | `golden-pit-ltf` | Golden Pit signal (5m/15m) - Bull=recovery after dip, Bear=drop after bounce | High |
 | `token-unlock` | Token unlock events, including unlock time, fundamentals, volume, etc. | Daily |
 | `etf-tracker` | Daily BTC/ETH/SOL/XRP ETF fund inflows and outflows | Daily |
-| `market-today` | Altcoin Season Index + Fear & Greed Index | Daily |
+| `market-today` | Discord-style market summary stream; use `methodalgo totals` for structured metric values | Daily |
 
 ### Standard Output Structure
 **Standard Signal Channels** (breakout / liquidation / exhaustion / golden-pit / etf-tracker / market-today):
@@ -292,13 +291,15 @@ methodalgo signals <channel> --limit <N> --json
   "Net Inflow": "$0K", "7 Days Avg.": "$663.0K"
 }
 ```
-6. **`market-today`** (Market sentiment, including Season Index and Fear & Greed Index)
+6. **`market-today`** (Discord-style market summary stream)
 ```json
-// Type A (Season Index)
-{ "Alt Season": "...", "Bitcoin Season": "..." }
-// Type B (Fear And Greed Index)
-{ "Yesterday": "12", "3Days Ago": "10", "7Days Ago": "10" }
+{
+  "summary": "...",
+  "image": "https://m.methodalgo.com/tmp/xxx.webp",
+  "details": { "...": "..." }
+}
 ```
+> For structured BTC dominance, ETH dominance, total market cap, Fear & Greed, and Altseason Index values, call `methodalgo totals --json` or a specific `methodalgo totals <metric> --json` command.
 
 #### `token-unlock` Channel Structure
 **`token-unlock` channel** (Unique data structure with a `signals` array at the top level):
@@ -364,27 +365,32 @@ methodalgo calendar --countries <codes> [options] --json
 
 ---
 
-## 🏦 Federal Reserve Data (FRED) Command
+## 🏦 Macro Data Command
 
-Access 800,000+ macro economic time series from FRED (Federal Reserve Economic Data) maintained by the St. Louis Fed.
+Access server-side macroeconomic data, FRED-derived indicators, economic calendar data, and market environment series. The CLI no longer needs a local FRED key; Methodalgo handles upstream macro data on the server side.
 
 ```bash
-methodalgo fred <subcommand> [options] --json
+methodalgo macro <subcommand> [options] --json
 ```
 
 ### Subcommands
 
 | Subcommand | Description | Example |
 |------------|-------------|---------|
-| `dashboard` | Full macro overview (Rates, Inflation, Liquidity, Employment, etc.) | `methodalgo fred dashboard --json` |
-| `recession` | Recession indicator scorecard (6 classic signals) | `methodalgo fred recession --json` |
-| `liquidity` | Net liquidity analysis (Fed Assets - RRP - TGA) | `methodalgo fred liquidity --json` |
-| `latest <id>`| Get the latest value for a specific series ID | `methodalgo fred latest FEDFUNDS --json` |
-| `search <q>` | Search for FRED series by keywords | `methodalgo fred search "gold price" --json` |
-| `compare <ids>`| Compare multiple series (comma-separated IDs) | `methodalgo fred compare DGS10,DGS2 --json` |
-| `changes <id>` | Show recent changes and trends for a series | `methodalgo fred changes WALCL --json` |
-| `spread <i1,i2>`| Compute difference between two series | `methodalgo fred spread T10Y2Y,T10Y3M --json` |
-| `zscore <id>` | Z-score and percentile analysis vs historical data | `methodalgo fred zscore CPIAUCSL --json` |
+| `environment` | Current market environment data | `methodalgo macro environment --json` |
+| `history <metric>` | Historical market environment series | `methodalgo macro history altcoinSeason --timeframe 90d --json` |
+| `snapshot` | Server-side macro snapshot | `methodalgo macro snapshot --json` |
+| `series <source> <seriesId>` | Macro time series from a source such as FRED | `methodalgo macro series fred DGS10 --timeframe 6m --json` |
+| `calendar` | Server-side economic calendar | `methodalgo macro calendar --countries US --json` |
+| `dashboard` | Full macro overview (Rates, Inflation, Liquidity, Employment, etc.) | `methodalgo macro dashboard --json` |
+| `recession` | Recession indicator scorecard (6 classic signals) | `methodalgo macro recession --json` |
+| `liquidity` | Net liquidity analysis (Fed Assets - RRP - TGA) | `methodalgo macro liquidity --json` |
+| `latest <id>`| Get the latest value for a specific series ID | `methodalgo macro latest FEDFUNDS --json` |
+| `search <q>` | Search for FRED series by keywords | `methodalgo macro search "gold price" --json` |
+| `compare <ids>`| Compare multiple series (comma-separated IDs) | `methodalgo macro compare DGS10,DGS2 --json` |
+| `changes <id>` | Show recent changes and trends for a series | `methodalgo macro changes WALCL --json` |
+| `spread <series1> <series2>`| Compute difference between two series | `methodalgo macro spread T10Y2Y T10Y3M --json` |
+| `zscore <id>` | Z-score and percentile analysis vs historical data | `methodalgo macro zscore CPIAUCSL --lookback 5y --json` |
 
 ### 💡 High-Alpha Series IDs for Crypto Traders
 
@@ -408,11 +414,11 @@ methodalgo fred <subcommand> [options] --json
 |-----------|-----------|--------------------------|
 | **Interest Rates** (`FEDFUNDS`, `DGS10`) | ⬆️ Increasing | **Bearish** (Higher cost of capital, attracts liquidity to bonds) |
 | **Inflation** (`CPIAUCSL`, `PCEPILFE`) | ⬆️ Above Target | **Bearish** (Forces Fed to keep rates high or hike further) |
-| **Net Liquidity** (`fred liquidity`) | ⬆️ Expanding | **Bullish** (More "excess" cash flowing into risk assets) |
+| **Net Liquidity** (`macro liquidity`) | ⬆️ Expanding | **Bullish** (More "excess" cash flowing into risk assets) |
 | **US Dollar** (`DTWEXBGS`) | ⬆️ Strengthening | **Bearish** (Inverse correlation with BTC price) |
 | **Real Rates** (`REAINTRATREARAT10Y`) | ⬇️ Falling/Negative| **Bullish** (Incentivizes holding non-yielding assets like Gold/BTC) |
 
-> **Macro Pro-Tip**: `methodalgo fred liquidity` automatically calculates **Net Liquidity** using `Fed Assets - RRP - TGA`. This is the single most important macro driver for Bitcoin's medium-term price action.
+> **Macro Pro-Tip**: `methodalgo macro liquidity` automatically calculates **Net Liquidity** using `Fed Assets - RRP - TGA`. This is the single most important macro driver for Bitcoin's medium-term price action.
 ### Parameters
 
 | Parameter | Description | Example |
@@ -420,6 +426,36 @@ methodalgo fred <subcommand> [options] --json
 | `--tail` | Show only the last N observations where supported; for `liquidity`, `--tail 52` approximates one year of weekly data | `--tail 52` |
 | `--m2` | Include M2 money supply context in liquidity output | `--m2` |
 | `--lookback` | Lookback window for `zscore` analysis | `--lookback 5y` / `24m` / `365d` |
+| `--json` | Outputs structured JSON data | `--json` |
+
+---
+
+## 🌐 Crypto Market Totals Command
+
+Access structured crypto market total statistics from CMC-backed Methodalgo data. Use `totals` for crypto-wide statistics; use `signals market-today` only when you need the Discord-style market summary stream.
+
+```bash
+methodalgo totals [metric] [options] --json
+```
+
+### Metrics
+
+| Metric | Description | Example |
+|--------|-------------|---------|
+| `btc-dominance` | BTC dominance | `methodalgo totals btc-dominance --history 90d --json` |
+| `eth-dominance` | ETH dominance | `methodalgo totals eth-dominance --json` |
+| `total-market-cap` | Total crypto market capitalization | `methodalgo totals total-market-cap --json` |
+| `fear-greed` | Fear & Greed Index | `methodalgo totals fear-greed --history 30d --json` |
+| `altseason-index` | Altseason Index | `methodalgo totals altseason-index --history 90d --json` |
+
+Run `methodalgo totals` without a metric to show the available metric help instead of fetching data.
+
+### Parameters
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `--convert` | Quote currency, default `USD` | `--convert USD` |
+| `--history` | Include history for `30d`, `90d`, or `1y` | `--history 90d` |
 | `--json` | Outputs structured JSON data | `--json` |
 
 ---
@@ -493,19 +529,22 @@ methodalgo binance <subcommand> [options] --json
 | Check breakout signals | `methodalgo signals breakout-mtf --limit 10 --json` |
 | Check token unlocks | `methodalgo signals token-unlock --limit 1 --json` |
 | Check ETF fund flows | `methodalgo signals etf-tracker --limit 10 --json` |
-| Check global market sentiment | `methodalgo signals market-today --limit 5 --json` |
+| Check structured crypto market totals | `methodalgo totals --json` |
+| Check BTC dominance history | `methodalgo totals btc-dominance --history 90d --json` |
+| Check Fear & Greed history | `methodalgo totals fear-greed --history 30d --json` |
+| Check Discord market-today summary | `methodalgo signals market-today --limit 5 --json` |
 | Check liquidation events | `methodalgo signals liquidation --limit 10 --json` |
 | Check Golden Pit signals | `methodalgo signals golden-pit-mtf --limit 10 --json` |
 | Check macroeconomic data (US) | `methodalgo calendar --countries US --json` |
 | Check upcoming macro events | `methodalgo calendar --countries US,EU,CN --from 2026-04-01 --json` |
-| Check global macro dashboard | `methodalgo fred dashboard --json` |
-| Check US recession risk | `methodalgo fred recession --json` |
-| Analyze macro liquidity impact on BTC | `methodalgo fred liquidity --tail 52 --json` |
-| Compare DXY and 10Y Yields | `methodalgo fred compare DTWEXBGS,DGS10 --json` |
-| Analyze Real Interest Rate impact | `methodalgo fred zscore REAINTRATREARAT10Y --json` |
-| Compare 10Y and 2Y Treasury (Recession Warning) | `methodalgo fred spread T10Y2Y,T10Y3M --json` |
-| Search for specific economic data (e.g. Gold) | `methodalgo fred search 'Gold London Fix' --json` |
-| Get specific macro indicator (e.g. CPI) | `methodalgo fred latest CPIAUCSL --json` |
+| Check global macro dashboard | `methodalgo macro dashboard --json` |
+| Check US recession risk | `methodalgo macro recession --json` |
+| Analyze macro liquidity impact on BTC | `methodalgo macro liquidity --tail 52 --json` |
+| Compare DXY and 10Y Yields | `methodalgo macro compare DTWEXBGS,DGS10 --json` |
+| Analyze Real Interest Rate impact | `methodalgo macro zscore REAINTRATREARAT10Y --json` |
+| Compare 10Y and 3M Treasury (Recession Warning) | `methodalgo macro spread T10Y2Y T10Y3M --json` |
+| Search for specific economic data (e.g. Gold) | `methodalgo macro search 'Gold London Fix' --json` |
+| Get specific macro indicator (e.g. CPI) | `methodalgo macro latest CPIAUCSL --json` |
 | Check Binance spot price and 24h change | `methodalgo binance price BTCUSDT --json` |
 | Check Binance futures price and 24h change | `methodalgo binance price BTCUSDT.P --json` |
 | Compare Binance 24h movers | `methodalgo binance movers --market futures --limit 10 --json` |
@@ -529,8 +568,9 @@ methodalgo binance <subcommand> [options] --json
 5. **Structural Inconsistency Alert**: `token-unlock` returns an object (containing a `signals` array), while other channels return an array. The AI must determine processing logic based on the `channel`.
 6. **Snapshot Screenshots**: `snapshot` returns image links via `--url` by default. Please access the visualized market charts through these links. 
 7. **Authentication Failure**: If Methodalgo service commands fail with 401/403 errors, verify your API key at **https://account.methodalgo.com/account/api-keys** and re-run `methodalgo login`. Binance public data commands do not use this API key.
-8. **FRED API Key**: While Methodalgo provides macro data, you can set your own FRED key for higher limits: `methodalgo config set fred-api-key <key>`.
-9. **Binance Public Data**: `methodalgo binance` uses public Binance endpoints and does not require a Binance API key. Use `.P` symbols for futures when available, and use `--market futures` for list-style futures queries.
+8. **Macro Data**: Use `methodalgo macro ...` for macro/FRED-derived data. The CLI no longer requires a local FRED API key.
+9. **Crypto Totals**: Use `methodalgo totals ...` for BTC dominance, ETH dominance, total market cap, Fear & Greed, and Altseason Index. Use `signals market-today` only for the Discord summary stream.
+10. **Binance Public Data**: `methodalgo binance` uses public Binance endpoints and does not require a Binance API key. Use `.P` symbols for futures when available, and use `--market futures` for list-style futures queries.
 
 > Github: https://github.com/methodalgo/methodalgo-market-intel-explorer
 > ClawHub: https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer

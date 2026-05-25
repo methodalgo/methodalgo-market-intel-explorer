@@ -78,7 +78,6 @@
 ## Market Comprehensive Metrics (Market Today)
 
 ### market-today
-- **Mechanism**: Contains two metrics — Altcoin Season Index + Fear & Greed Index.
-- Each call returns multiple items, corresponding to different metrics.
-- **`details` Fields (Alt Season)**: `Alt Season`, `Bitcoin Season`
-- **`details` Fields (Fear & Greed)**: `Yesterday`, `3Days Ago`, `7Days Ago`
+- **Mechanism**: Discord-style published market summary stream. It may include images and narrative market sentiment content.
+- Use `methodalgo totals --json` for structured BTC dominance, ETH dominance, total market cap, Fear & Greed, and Altseason Index values.
+- **`details` Fields**: Varies by published summary item. Do not rely on this channel for structured metric values.

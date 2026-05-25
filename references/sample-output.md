@@ -275,9 +275,89 @@ methodalgo calendar --countries US --json
 
 ---
 
-## 🏦 Federal Reserve Data (FRED)
+## 🌐 Crypto Market Totals (totals)
 
-### 1. fred dashboard
+```bash
+methodalgo totals --json
+```
+
+```json
+{
+  "command": "totals",
+  "convert": "USD",
+  "source": "coinmarketcap",
+  "updatedAt": "2026-05-25T00:00:00.000Z",
+  "metrics": {
+    "btcDominance": {
+      "metric": "btcDominance",
+      "label": "BTC Dominance",
+      "value": 61.42,
+      "displayValue": "61.42%",
+      "raw": 61.42
+    },
+    "ethDominance": {
+      "metric": "ethDominance",
+      "label": "ETH Dominance",
+      "value": 9.18,
+      "displayValue": "9.18%",
+      "raw": 9.18
+    },
+    "totalMarketCap": {
+      "metric": "totalMarketCap",
+      "label": "Total Market Cap",
+      "value": 3450000000000,
+      "displayValue": "$3.45T",
+      "raw": 3450000000000
+    },
+    "fearAndGreed": {
+      "metric": "fearAndGreed",
+      "label": "Fear & Greed",
+      "value": 52,
+      "displayValue": "52 Neutral",
+      "raw": { "value": 52, "classification": "Neutral" }
+    },
+    "altcoinSeason": {
+      "metric": "altcoinSeason",
+      "label": "Altseason Index",
+      "value": 31,
+      "displayValue": "31",
+      "raw": { "value": 31 }
+    }
+  }
+}
+```
+
+```bash
+methodalgo totals btc-dominance --history 90d --json
+```
+
+```json
+{
+  "command": "totals btc-dominance",
+  "convert": "USD",
+  "source": "coinmarketcap",
+  "metric": "btcDominance",
+  "label": "BTC Dominance",
+  "value": 61.42,
+  "displayValue": "61.42%",
+  "raw": 61.42,
+  "history": {
+    "timeframe": "90d",
+    "metric": "btcDominance",
+    "points": [
+      { "time": "2026-05-23", "value": 61.08 },
+      { "time": "2026-05-24", "value": 61.25 },
+      { "time": "2026-05-25", "value": 61.42 }
+    ]
+  }
+}
+```
+
+---
+
+## 🏦 Macro Data (macro)
+
+### 1. macro dashboard
 ```json
 {
   "command": "dashboard",
@@ -303,7 +383,7 @@ methodalgo calendar --countries US --json
 }
 ```
 
-### 2. fred recession
+### 2. macro recession
 ```json
 {
   "command": "recession",
@@ -317,7 +397,7 @@ methodalgo calendar --countries US --json
 }
 ```
 
-### 3. fred liquidity (Net Liquidity Analysis)
+### 3. macro liquidity (Net Liquidity Analysis)
 ```json
 [
   {
@@ -338,7 +418,7 @@ methodalgo calendar --countries US --json
 ```
 > **Formula**: `NET_LIQ = WALCL - RRPONTSYD - WTREGEN`. Values in Billions of USD.
 
-### 4. fred latest
+### 4. macro latest
 ```json
 {
   "series_id": "FEDFUNDS",
@@ -349,7 +429,7 @@ methodalgo calendar --countries US --json
 }
 ```
 
-### 5. fred zscore
+### 5. macro zscore
 ```json
 {
   "series_id": "CPIAUCSL",

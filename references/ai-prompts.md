@@ -17,10 +17,11 @@ This document provides a series of optimized prompt examples designed to help AI
 ### 1. Daily Morning Report / Market Overview
 **Prompt**:
 > Please use the `methodalgo-market-intel-explorer` skill to generate a crypto market overview for me today.
-> 1. Call `methodalgo signals market-today --limit 5 --json` to get the Fear & Greed Index and Altcoin Season metrics.
+> 1. Call `methodalgo totals --json` to get structured BTC dominance, ETH dominance, total market cap, Fear & Greed, and Altseason Index metrics.
 > 2. Call `methodalgo signals etf-tracker --limit 10 --json` to get the latest ETF fund flows.
 > 3. Call `methodalgo news --type article --limit 50 --json` to fetch 50 of today's deep-dive news articles.
 > 4. Call `methodalgo news --type breaking --limit 50 --json` to fetch the latest 50 important breaking news flashes.
+> 5. Optionally call `methodalgo signals market-today --limit 5 --json` if the user specifically wants the Discord-style market summary stream.
 >
 > Combine the above data to analyze current market sentiment and potential risks in concise English.
 
@@ -48,13 +49,13 @@ This document provides a series of optimized prompt examples designed to help AI
 > Note: This command returns an object; please extract `symbol`, `perc` (unlock percentage), `countDown`, and `unlockTokenVal` (unlock value) from the `signals` array. `ts` is the scheduled unlock time.
 > Highlight projects with unlock proportions exceeding 1% of the circulating supply and analyze the potential downward pressure on price.
 
-### 5. Macroeconomic Data & FRED Deep Analysis
+### 5. Macroeconomic Data Deep Analysis
 **Prompt**:
 > I need a comprehensive macroeconomic analysis:
-> 1. Get the global macro dashboard: `methodalgo fred dashboard --json`.
-> 2. Check the US recession scorecard: `methodalgo fred recession --json`.
-> 3. Analyze crypto-related net liquidity: `methodalgo fred liquidity --json`.
-> 4. Search for "Gold" related indicators: `methodalgo fred search 'Gold' --json`.
+> 1. Get the global macro dashboard: `methodalgo macro dashboard --json`.
+> 2. Check the US recession scorecard: `methodalgo macro recession --json`.
+> 3. Analyze crypto-related net liquidity: `methodalgo macro liquidity --json`.
+> 4. Search for "Gold" related indicators: `methodalgo macro search 'Gold' --json`.
 >
 > Summarize the current macro environment, highlighting any "warning" or "danger" signals. Explain how current liquidity levels and recession risks might impact Bitcoin's mid-term price action.
 

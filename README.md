@@ -1,6 +1,6 @@
 # 🛠️ Methodalgo Market Intel Explorer
 
-`methodalgo-market-intel-explorer` is a market intelligence exploration skill specifically designed for AI agents (such as Claude). Through the integrated `methodalgo` CLI, it captures real-time cryptocurrency news, Binance spot/futures public market data, macroeconomic events, trading signals, ETF fund flows, and market sentiment indicators.
+`methodalgo-market-intel-explorer` is a market intelligence exploration skill specifically designed for AI agents (such as Claude). Through the integrated `methodalgo` CLI, it captures real-time cryptocurrency news, Binance spot/futures public market data, macroeconomic events, macro indicators, trading signals, ETF fund flows, and crypto market totals.
 
 ---
 
@@ -19,7 +19,7 @@
 
 - **📰 Comprehensive News**: Supports deep-dive articles (`article`), real-time breaking news (`breaking`), on-chain monitoring (`onchain`), and institutional research reports (`report`).
 - **📡 Real-time Signals**: Includes High/Medium Timeframe Breakouts (`breakout`), Large Liquidations (`liquidation`), Buyer/Seller Exhaustion (`exhaustion`), and "Golden Pit" signals based on Smart Cloud patterns.
-- **📊 Market Data**: Provides macroeconomic events (`calendar`), token unlock countdowns, ETF fund flows, and daily market summaries (Fear & Greed Index).
+- **📊 Market Data**: Provides macroeconomic events (`calendar`), macro indicators (`macro`), token unlock countdowns, ETF fund flows, and crypto market totals (`totals`) such as BTC/ETH dominance, total market cap, Fear & Greed, and Altseason Index.
 - **🟡 Binance Public Data**: Queries Binance spot/futures prices, 24h movers, order books, klines, futures funding, open interest, basis, and long/short sentiment without a Binance API key.
 - **📸 Instant Snapshots**: Fetch TradingView chart screenshots for any symbol at any time (supports Spot and Perpetual).
 - **🤖 AI-Friendly**: Outputs pure JSON structured data, making it easy for AI to extract key information.
@@ -69,7 +69,7 @@ This skill relies on the `methodalgo` CLI — an **open-source npm package** ([n
 npm install -g methodalgo-cli
 ```
 
-**API Key Required for Methodalgo Service Data**: News, signals, snapshots, calendar, and Methodalgo-backed data commands are authenticated with a Methodalgo API key. Binance public market data commands (`methodalgo binance ...`) do not require a Methodalgo API key or a Binance API key.
+**API Key Required for Methodalgo Service Data**: News, signals, snapshots, calendar, macro, totals, and Methodalgo-backed data commands are authenticated with a Methodalgo API key. Binance public market data commands (`methodalgo binance ...`) do not require a Methodalgo API key or a Binance API key.
 
 > 🔑 **Apply for an API key**: [https://account.methodalgo.com/account/api-keys](https://account.methodalgo.com/account/api-keys)
 
@@ -81,7 +81,7 @@ methodalgo login   # follow the prompts to enter your API key
 
 The key is stored locally on your machine and is only used to authenticate requests to Methodalgo's own API.
 
-**Optional FRED API Key**: `FRED_API_KEY` is only needed when using `methodalgo fred ...` macro data commands. News, signals, snapshots, calendar, and Binance public data commands work without it.
+Use `methodalgo-cli` v1.0.33 or newer for the `macro` and `totals` commands. Macro/FRED-derived data is handled by Methodalgo on the server side, so users do not need to configure a local FRED API key.
 
 ---
 
@@ -113,13 +113,24 @@ methodalgo snapshot SOLUSDT.P 60 --url --json
 methodalgo calendar --countries US --json
 ```
 
-### Fetch Macro Data (FRED)
+### Fetch Macro Data
 ```bash
 # Get the global macro dashboard
-methodalgo fred dashboard --json
+methodalgo macro dashboard --json
 
 # Analyze net liquidity trend
-methodalgo fred liquidity --tail 52 --json
+methodalgo macro liquidity --tail 52 --json
+```
+
+### Fetch Crypto Market Totals
+```bash
+# Show available totals metrics
+methodalgo totals
+
+# Get structured market-wide crypto indicators
+methodalgo totals btc-dominance --history 90d --json
+methodalgo totals fear-greed --history 30d --json
+methodalgo totals altseason-index --history 90d --json
 ```
 
 ### Fetch Binance Public Market Data
@@ -148,9 +159,11 @@ methodalgo binance sentiment BTCUSDT.P --period 5m --limit 12 --json
 | **Mid-term Breakouts** | `methodalgo signals breakout-mtf --limit 10 --json` |
 | **Trend Reversals** | `methodalgo signals exhaustion-buyer --limit 5 --json` |
 | **Buy the Dip (Golden Pit)** | `methodalgo signals golden-pit-mtf --limit 5 --json` |
-| **Macro Analysis (FRED)** | `methodalgo fred dashboard --json` |
-| **Liquidity & BTC Pivot** | `methodalgo fred liquidity --tail 52 --json` |
-| **Recession Warning** | `methodalgo fred recession --json` |
+| **Macro Analysis** | `methodalgo macro dashboard --json` |
+| **Liquidity & BTC Pivot** | `methodalgo macro liquidity --tail 52 --json` |
+| **Recession Warning** | `methodalgo macro recession --json` |
+| **Crypto Market Totals Help** | `methodalgo totals` |
+| **BTC/ETH Dominance & Sentiment** | `methodalgo totals --json` |
 | **Macro Events Econonmic calendar (realtime result)** | `methodalgo calendar --countries US,EU --json` |
 | **Binance Spot Price** | `methodalgo binance price BTCUSDT --json` |
 | **Binance Futures Price** | `methodalgo binance price BTCUSDT.P --json` |
@@ -159,7 +172,7 @@ methodalgo binance sentiment BTCUSDT.P --period 5m --limit 12 --json
 | **Get Chart Snapshot** | `methodalgo snapshot BTCUSDT.P 60 --url --json` |
 | **Check ETF Flows** | `methodalgo signals etf-tracker --limit 1 --json` |
 | **Token Unlocks** | `methodalgo signals token-unlock --limit 10 --json` |
-| **Sentiment Monitoring** | `methodalgo signals market-today --limit 1 --json` |
+| **Discord Market Summary** | `methodalgo signals market-today --limit 1 --json` |
 
 ---
 
