@@ -1,6 +1,6 @@
 ---
 name: methodalgo-market-intel-explorer
-version: 1.4.0
+version: 1.4.1
 description: Fetches cryptocurrency news, Binance public market data, chart snapshots, economic calendar data, server-side macro/FRED-derived indicators, crypto market totals, and trading signals. Use this skill when the user wants to check the latest crypto news, Binance spot/futures prices, 24h movers, order books, OHLCV klines, futures funding, open interest, long/short ratios, market snapshots, chart screenshots, trading signals, token unlocks, ETF flows, BTC/ETH dominance, total crypto market cap, Fear & Greed, Altseason Index, and macro-economic data (GDP, CPI, Liquidity, etc.).
 metadata:
   openclaw:
