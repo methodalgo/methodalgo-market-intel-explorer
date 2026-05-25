@@ -25,7 +25,7 @@ credentials:
     required: true
 provenance:
   cli: https://www.npmjs.com/package/methodalgo-cli
-  minCliVersion: 1.0.33
+  minCliVersion: 1.0.34
   source: https://github.com/methodalgo/methodalgo-market-intel-explorer
   registry: https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer
 ---
@@ -89,7 +89,7 @@ If you encounter errors, check the following:
 |---------------|----------|
 | **Authentication Required** | Run `methodalgo login` or set `METHODALGO_API_KEY` environment variable. |
 | **Command Not Found** | Ensure `methodalgo-cli` is installed: `npm install -g methodalgo-cli`. |
-| **macro/totals command missing** | Update the CLI to `methodalgo-cli` v1.0.33 or newer: `methodalgo update` or reinstall with `npm install -g methodalgo-cli`. |
+| **macro/totals command missing** | Update the CLI to `methodalgo-cli` v1.0.34 or newer: `methodalgo update` or reinstall with `npm install -g methodalgo-cli`. |
 | **Binance command missing** | Update the CLI to `methodalgo-cli` v1.0.26 or newer: `methodalgo update` or reinstall with `npm install -g methodalgo-cli`. |
 | **Network Timeout** | Ensure your network can access `methodalgo.com`. |
 | **Outdated Results** | Update the CLI: `methodalgo update`. |

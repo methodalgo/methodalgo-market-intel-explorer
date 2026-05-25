@@ -81,7 +81,7 @@ methodalgo login   # follow the prompts to enter your API key
 
 The key is stored locally on your machine and is only used to authenticate requests to Methodalgo's own API.
 
-Use `methodalgo-cli` v1.0.33 or newer for the `macro` and `totals` commands. Macro/FRED-derived data is handled by Methodalgo on the server side, so users do not need to configure a local FRED API key.
+Use `methodalgo-cli` v1.0.34 or newer for the `macro` and `totals` commands. Macro/FRED-derived data is handled by Methodalgo on the server side, so users do not need to configure a local FRED API key.
 
 ---
 
