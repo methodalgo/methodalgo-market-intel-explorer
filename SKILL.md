@@ -1,6 +1,6 @@
 ---
 name: methodalgo-market-intel-explorer
-version: 1.4.1
+version: 1.4.2
 description: >
   Fetch MethodAlgo crypto market intelligence with methodalgo-cli. Use when:
   checking crypto news, trading signals, token unlocks, ETF flows, chart
