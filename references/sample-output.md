@@ -1,236 +1,82 @@
-# JSON Output Samples (Full Version)
+# JSON Output Samples
 
-The following are real structured output examples from various `methodalgo` CLI commands, provided to help AI agents accurately understand data patterns, field types, and their business meanings.
+Compact examples for parser orientation. Use `SKILL.md` for protected signal schema rules and `references/command-reference.md` for full command parameters.
 
----
+## News
 
-## 📰 News Data (news)
+```bash
+methodalgo news --type article --limit 1 --json
+```
 
-### 1. article (Deep Analysis)
 ```json
 [
   {
     "type": "article",
-    "title": {
-      "en": "Coinbase disables Ronin trading as Ethereum L2 migration enters execution phase",
-      "zh": "Coinbase 禁用 Ronin 交易，以太坊 L2 迁移进入执行阶段"
-    },
-    "excerpt": {
-      "en": "Coinbase disabled Ronin trading as the network's Ethereum L2 migration enters execution.",
-      "zh": "Coinbase 禁用了 Ronin 交易，因为该网络的以太坊 L2 迁移进入了执行阶段。"
-    },
-    "description": { "en": "...", "zh": "..." },
-    "analysis": {
-      "en": "Coinbase disabling Ronin trading may signal temporary disruption...",
-      "zh": "Coinbase因Ronin进入L2迁移阶段授权而禁用交易，可能预示..."
-    },
-    "publish_date": "2026-03-30T19:35:00.865+00:00",
-    "url": "https://ambcrypto.com/coinbase-disables-ronin-trading-..."
-  }
-]
-```
-> **Features**: Includes `excerpt`, `analysis`, and the original `url`.
-
-### 2. breaking (Breaking News)
-```json
-[
-  {
-    "type": "news",
-    "title": {
-      "en": "JUST IN: BlackRock CIO Rick Rieder says he thinks the Federal Reserve will cut interest rates.",
-      "zh": "突发：贝莱德首席信息官 Rick Rieder 称，他认为美联储将降息。"
-    },
+    "title": { "en": "Bitcoin market update", "zh": "比特币市场更新" },
+    "excerpt": { "en": "Summary...", "zh": "摘要..." },
+    "description": { "en": "Full body...", "zh": "正文..." },
+    "analysis": { "en": "AI analysis...", "zh": "AI 分析..." },
     "publish_date": "2026-03-30T19:15:56+00:00",
-    "url": ""
-  }
-]
-```
-> **Features**: Highly concise fields, typically lacking an excerpt or analysis.
-
-### 3. onchain (On-chain Data)
-```json
-[
-  {
-    "type": "news",
-    "title": {
-      "en": "Combined net outflows of nearly $1 billion reported from Binance/OKX over 24h.",
-      "zh": "据报道，币安和 OKX 在过去 24 小时内的净流出总额接近 10 亿美元。"
-    },
-    "publish_date": "2026-03-30T17:00:53+00:00"
+    "url": "https://..."
   }
 ]
 ```
 
-### 4. report (Research Reports)
-```json
-[
-  {
-    "type": "report",
-    "title": {
-      "en": "Glassnode Update: Recent $76k rally coincided with smaller wallet distribution.",
-      "zh": "Glassnode 更新：近期向 76k 美元的反弹伴随着小额钱包持有者的分发行为。"
-    },
-    "publish_date": "2026-03-30T18:07:01+00:00"
-  }
-]
-```
+`breaking`, `onchain`, and `report` can omit article-style fields or return them as empty strings. Treat empty `excerpt`, `description`, `analysis`, or `url` as absent content.
 
----
+## Signals
 
-## 📡 Signal Data (signals)
+Standard channels such as `breakout-*`, `liquidation`, `exhaustion-*`, `golden-pit-*`, `etf-tracker`, and `market-today` return an array.
 
-### 1. breakout-mtf/htf (Breakouts)
 ```json
 [
   {
     "id": "1488261183843864617-0-0",
     "timestamp": 1774899516784,
+    "attachments": [],
+    "image": "https://m.methodalgo.com/tmp/xxx.webp",
     "signals": [
       {
         "title": "Breakout For NIGHTUSDT.P",
         "description": "Symbol: NIGHTUSDT.P\nType: Break-Down\nTimeFrame: 1h",
         "direction": "bear",
         "details": {
-          "Symbol": "NIGHTUSDT.P", 
-          "TimeFrame": "1h", 
-          "Type": "DOWN", 
-          "BreakPrice": "0.04284"
+          "Symbol": "NIGHTUSDT.P",
+          "TimeFrame": "1h",
+          "Type": "DOWN",
+          "BreakPrice": "0.04284",
+          "Exchange": "BINANCE"
         }
       }
-    ],
-    "image": "https://m.methodalgo.com/tmp/xxx.webp"
+    ]
   }
 ]
 ```
 
-### 2. liquidation (Large Liquidations)
-```json
-[
-  {
-    "id": "1488258385802715154-1-0",
-    "timestamp": 1774898849641,
-    "signals": [
-      {
-        "title": "🔴🔴🔴 $20.1 K LIQUIDATION Line On ETHUSDT.P",
-        "direction": "bear",
-        "details": {
-          "Symbol": "ETHUSDT.P",
-          "Side": "🔴 SHORT",
-          "Quantity": "8.52",
-          "Average Price": "$2025.37",
-          "Liquidation Price": "$2035.00",
-          "Position Total": "$20111"
-        }
-      }
-    ],
-    "image": null
-  }
-]
-```
+`token-unlock` returns an object with a root `signals` array.
 
-### 3. exhaustion-buyer/seller (Liquidation Exhaustion/Reversal)
-```json
-[
-  {
-    "id": "1488212071433633804-0-0",
-    "timestamp": 1774887807473,
-    "signals": [
-      {
-        "title": "BUYER Exhaustion for DEGOUSDT.P",
-        "description": "Liquidation lines below are under 10%",
-        "direction": "bear",
-        "details": {
-          "Type": "Early Reversal",
-          "Timeframe": "30m",
-          "Exhaustion Side": "BUYER",
-          "Safety": "Avoid unusual funding-rates / Apex",
-          "Tip": "Limit order on gap-edge / final line / previous high",
-          "Exchange": "Binance"
-        }
-      }
-    ],
-    "image": "https://m.methodalgo.com/tmp/xxx.webp"
-  }
-]
-```
-
-### 4. golden-pit-mtf/ltf (Golden Pit)
-```json
-[
-  {
-    "id": "1488251574781350068-1-0",
-    "timestamp": 1774897225805,
-    "signals": [
-      {
-        "title": "Golden Pit For BTRUSDT.P",
-        "description": "Type: 🔴Bear Pit🔴",
-        "direction": "bear",
-        "details": {
-          "Pattern": "Pull then Push",
-          "Safety": "Wait 6-10 bars to develop, careful of reversal cloud"
-        }
-      }
-    ],
-    "image": "https://m.methodalgo.com/tmp/xxx.webp"
-  }
-]
-```
-
-### 5. token-unlock (Special Object Structure)
 ```json
 {
   "signals": [
     {
-      "ts": 1774915176616,
+      "ts": 1774915176617,
       "symbol": "OP",
       "perc": 1.52,
       "progress": "40.91%",
-      "circSup": "6.79 B ICE",
+      "circSup": "6.79 B OP",
       "countDown": "0Day23Hr30Min",
       "marketCap": "$218.99 M",
       "unlockToken": "32.21 M",
       "unlockTokenVal": "$3.36 M (1.52% of M.Cap)"
     }
   ],
-  "updatedAt": 1774915176616
+  "updatedAt": 1774915176617
 }
 ```
-> ⚠️ **Note**: Returns a **single object** instead of an array.
 
-### 6. etf-tracker
-```json
-[
-  {
-    "id": "14873193...",
-    "signals": [
-      {
-        "title": "XRP ETF Inflow : 2026-03-27",
-        "details": { "Net Inflow": "$0K", "7 Days Avg.": "$663.0K" }
-      }
-    ]
-  }
-]
-```
+`market-today` is a Discord-style summary stream. For structured BTC Dominance, ETH Dominance, Total Market Cap, Fear & Greed, and Altseason Index values, use `methodalgo totals --json`.
 
-### 7. market-today
-```json
-[
-  {
-    "id": "14876082...",
-    "signals": [
-      {
-        "title": "Fear And Greed Index",
-        "description": "Today: 9 Sentiment: Extreme Fear",
-        "details": { "Yesterday": "12", "7Days Ago": "10" }
-      }
-    ]
-  }
-]
-```
-
----
-
-## 📸 Snapshot Data (snapshot)
+## Snapshot
 
 ```bash
 methodalgo snapshot SOLUSDT.P 60 --url --json
@@ -240,15 +86,12 @@ methodalgo snapshot SOLUSDT.P 60 --url --json
 {
   "symbol": "SOLUSDT.P",
   "tf": "60",
-  "url": "https://m.methodalgo.com/tmp/1774900570519.webp",
-  "timestamp": 1774900570519
+  "url": "https://m.methodalgo.com/tmp/xxx.webp",
+  "timestamp": 1774899516784
 }
 ```
-> **Features**: Simple mapping structure containing instant-access WebP preview links.
 
----
-
-## 📅 Economic Calendar (calendar)
+## Calendar
 
 ```bash
 methodalgo calendar --countries US --json
@@ -261,21 +104,18 @@ methodalgo calendar --countries US --json
     "country": "US",
     "indicator": "Jobs",
     "period": "Mar",
-    "comment": "Nonfarm Payrolls measures the change in the number of people employed during the previous month, excluding the farming industry...",
     "actual": "275K",
     "forecast": "198K",
     "previous": "229K",
     "importance": 1,
     "date": "2026-04-03T12:30:00.000Z",
     "source": "Bureau of Labour Statistics",
-    "source_url": "http://www.bls.gov/"
+    "source_url": "http://www.bls.gov"
   }
 ]
 ```
 
----
-
-## 🌐 Crypto Market Totals (totals)
+## Totals
 
 ```bash
 methodalgo totals --json
@@ -285,394 +125,83 @@ methodalgo totals --json
 {
   "command": "totals",
   "convert": "USD",
-  "source": "coinmarketcap",
-  "updatedAt": "2026-05-25T00:00:00.000Z",
+  "source": "coinmarketcap+defillama",
+  "updatedAt": 1780286619755,
   "metrics": {
     "btcDominance": {
       "metric": "btcDominance",
-      "label": "BTC Dominance",
-      "value": 61.42,
-      "displayValue": "61.42%",
-      "raw": 61.42
-    },
-    "ethDominance": {
-      "metric": "ethDominance",
-      "label": "ETH Dominance",
-      "value": 9.18,
-      "displayValue": "9.18%",
-      "raw": 9.18
-    },
-    "totalMarketCap": {
-      "metric": "totalMarketCap",
-      "label": "Total Market Cap",
-      "value": 3450000000000,
-      "displayValue": "$3.45T",
-      "raw": 3450000000000
+      "label": "BTC 占比",
+      "value": 58.4,
+      "displayValue": "58.40%",
+      "raw": 58.4
     },
     "fearAndGreed": {
       "metric": "fearAndGreed",
-      "label": "Fear & Greed",
-      "value": 52,
-      "displayValue": "52 Neutral",
-      "raw": { "value": 52, "classification": "Neutral" }
-    },
-    "altcoinSeason": {
-      "metric": "altcoinSeason",
-      "label": "Altseason Index",
-      "value": 31,
-      "displayValue": "31",
-      "raw": { "value": 31 }
+      "label": "恐惧贪婪指数",
+      "value": 32,
+      "displayValue": "32 Fear",
+      "raw": { "value": 32, "classification": "Fear" }
     }
   }
 }
 ```
+
+History metrics include a time series when `--history 30d|90d|1y` is used.
+
+## Macro
 
 ```bash
-methodalgo totals btc-dominance --history 90d --json
+methodalgo macro liquidity --tail 2 --json
 ```
 
 ```json
 {
-  "command": "totals btc-dominance",
-  "convert": "USD",
-  "source": "coinmarketcap",
-  "metric": "btcDominance",
-  "label": "BTC Dominance",
-  "value": 61.42,
-  "displayValue": "61.42%",
-  "raw": 61.42,
-  "history": {
-    "timeframe": "90d",
-    "metric": "btcDominance",
-    "points": [
-      { "time": "2026-05-23", "value": 61.08 },
-      { "time": "2026-05-24", "value": 61.25 },
-      { "time": "2026-05-25", "value": 61.42 }
-    ]
-  }
-}
-```
-
----
-
-## 🏦 Macro Data (macro)
-
-### 1. macro dashboard
-```json
-{
-  "command": "dashboard",
-  "sections": {
-    "RATES": {
-      "FEDFUNDS": { "value": 5.33, "date": "2024-03-01", "title": "Federal Funds Effective Rate" },
-      "DGS10": { "value": 4.25, "date": "2024-03-25", "title": "10-Year Treasury Constant Maturity Rate" }
-    },
-    "INFLATION": {
-      "T10YIE": { "value": 2.32, "date": "2024-03-25", "title": "10-Year Breakeven Inflation Rate" }
+  "command": "macro liquidity",
+  "series": [
+    {
+      "date": "2026-03-20",
+      "netLiquidity": 6123456789012,
+      "fedAssets": 7123456789012,
+      "rrp": 123456789012,
+      "tga": 876543210987
     }
-  },
-  "liquidity": {
-    "WALCL": { "value_billions": 7450.21 },
-    "RRPONTSYD": { "value_billions": 450.12 },
-    "WTREGEN": { "value_billions": 750.45 },
-    "NET_LIQ": { "value_billions": 6249.64 }
-  },
-  "inflation_yoy": {
-    "CPI YoY": 3.15,
-    "Core PCE YoY": 2.82
-  }
-}
-```
-
-### 2. macro recession
-```json
-{
-  "command": "recession",
-  "signals": [
-    { "signal": "Yield Curve (10Y-2Y)", "status": "INVERTED", "reading": "-0.42%" },
-    { "signal": "Sahm Rule", "status": "CLEAR", "reading": "0.15pp" },
-    { "signal": "Financial Conditions (NFCI)", "status": "LOOSE", "reading": "-0.520" }
   ],
-  "warnings": 1,
-  "total": 6
-}
-```
-
-### 3. macro liquidity (Net Liquidity Analysis)
-```json
-[
-  {
-    "date": "2024-03-20",
-    "WALCL": 7490.5,
-    "RRPONTSYD": 480.2,
-    "WTREGEN": 720.1,
-    "NET_LIQ": 6290.2
-  },
-  {
-    "date": "2024-03-27",
-    "WALCL": 7450.2,
-    "RRPONTSYD": 450.1,
-    "WTREGEN": 750.4,
-    "NET_LIQ": 6249.7
+  "meta": {
+    "formula": "Fed Assets - RRP - TGA"
   }
-]
-```
-> **Formula**: `NET_LIQ = WALCL - RRPONTSYD - WTREGEN`. Values in Billions of USD.
-
-### 4. macro latest
-```json
-{
-  "series_id": "FEDFUNDS",
-  "title": "Federal Funds Effective Rate",
-  "units": "Percent",
-  "date": "2024-03-01",
-  "value": 5.33
 }
 ```
 
-### 5. macro zscore
-```json
-{
-  "series_id": "CPIAUCSL",
-  "title": "Consumer Price Index for All Urban Consumers: All Items in U.S. City Average",
-  "lookback": "10y",
-  "observations": 120,
-  "current": 312.23,
-  "mean": 270.45,
-  "std": 25.12,
-  "zscore": 1.66,
-  "percentile": 92.5,
-  "min": 236.12,
-  "max": 312.23
-}
-```
+Other macro commands can return dashboards, scorecards, latest values, changes, spreads, z-scores, or comparison series. If upstream macro/FRED requests fail, the CLI may print `✖ 网络错误: fred request failed`.
 
----
+## Binance Public Market Data
 
-## 🟡 Binance Public Market Data (binance)
-
-### Symbol Convention
-- `BTCUSDT` means Binance spot.
-- `BTCUSDT.P` means Binance USD-M perpetual futures. The CLI strips `.P` before calling Binance futures APIs.
-- `--json` usually returns the direct Binance API response. `movers` is the main normalized exception.
-
-### 1. binance price
 ```bash
 methodalgo binance price BTCUSDT.P --json
 ```
 
 ```json
 {
+  "symbol": "BTCUSDT",
   "market": "futures",
-  "symbol": "BTCUSDT",
-  "price": "78622.90",
-  "changePercent": "0.568",
-  "quoteVolume": "4088851853.07",
-  "high": "79145.00",
-  "low": "77979.30",
-  "closeTime": 1777761732220
+  "price": "98765.43",
+  "changePercent": "1.23",
+  "high": "99000.00",
+  "low": "96000.00",
+  "quoteVolume": "1234567890.12",
+  "closeTime": 1774899516784
 }
 ```
 
-### 2. binance ticker
-```bash
-methodalgo binance ticker BTCUSDT --json
-```
-
-```json
-{
-  "symbol": "BTCUSDT",
-  "priceChange": "418.47000000",
-  "priceChangePercent": "0.535",
-  "weightedAvgPrice": "78382.18177838",
-  "lastPrice": "78655.88000000",
-  "highPrice": "79199.48000000",
-  "lowPrice": "78040.00000000",
-  "volume": "6170.12345600",
-  "quoteVolume": "485322491.33660970",
-  "openTime": 1777675456965,
-  "closeTime": 1777761856965,
-  "count": 6267987
-}
-```
-
-### 3. binance movers
-```bash
-methodalgo binance movers --market futures --limit 2 --json
-```
+`movers` is normalized by the CLI:
 
 ```json
 {
   "market": "futures",
-  "gainers": [
-    {
-      "symbol": "LABUSDT",
-      "pctChange": 126.314,
-      "price": "2.17",
-      "rawPrice": 2.1656,
-      "quoteVolume": 125000000,
-      "volumeLabel": "$125.0M",
-      "rankType": "gainer",
-      "direction": "bull"
-    }
-  ],
-  "losers": [
-    {
-      "symbol": "TOKENUSDT",
-      "pctChange": -18.24,
-      "price": "0.45",
-      "rawPrice": 0.45,
-      "quoteVolume": 32000000,
-      "volumeLabel": "$32.0M",
-      "rankType": "loser",
-      "direction": "bear"
-    }
-  ],
-  "timestamp": "2026-05-02T22:44:00.000Z"
+  "gainers": [{ "symbol": "ABCUSDT", "pctChange": 18.5, "rankType": "gainer", "direction": "bull" }],
+  "losers": [{ "symbol": "XYZUSDT", "pctChange": -12.2, "rankType": "loser", "direction": "bear" }],
+  "timestamp": "2026-06-01T04:03:09.428Z"
 }
 ```
 
-### 4. binance book
-```bash
-methodalgo binance book BTCUSDT.P --limit 5 --json
-```
-
-```json
-{
-  "lastUpdateId": 10457834571765,
-  "E": 1777761857095,
-  "T": 1777761857085,
-  "bids": [["78619.90", "6.496"], ["78619.80", "0.240"]],
-  "asks": [["78620.00", "1.250"], ["78620.10", "3.811"]]
-}
-```
-
-### 5. binance klines
-```bash
-methodalgo binance klines BTCUSDT.P --interval 1m --limit 2 --json
-```
-
-```json
-[
-  [
-    1777761780000,
-    "78620.00",
-    "78620.10",
-    "78610.10",
-    "78619.00",
-    "15.614",
-    1777761839999,
-    "1227490.12",
-    312,
-    "8.200",
-    "644683.00",
-    "0"
-  ]
-]
-```
-
-### 6. binance funding
-```bash
-methodalgo binance funding BTCUSDT.P --limit 2 --json
-```
-
-```json
-{
-  "premium": {
-    "symbol": "BTCUSDT",
-    "markPrice": "78620.00000000",
-    "indexPrice": "78658.48065217",
-    "lastFundingRate": "0.00002210",
-    "nextFundingTime": 1777766400000
-  },
-  "history": [
-    {
-      "symbol": "BTCUSDT",
-      "fundingRate": "-0.00005278",
-      "fundingTime": 1777737600000,
-      "markPrice": "78181.60000000"
-    }
-  ]
-}
-```
-
-### 7. binance oi
-```bash
-methodalgo binance oi BTCUSDT.P --period 5m --limit 2 --json
-```
-
-```json
-{
-  "current": {
-    "symbol": "BTCUSDT",
-    "openInterest": "102039.216",
-    "time": 1777761857377
-  },
-  "history": [
-    {
-      "symbol": "BTCUSDT",
-      "sumOpenInterest": "102017.81400000",
-      "sumOpenInterestValue": "8030000000.00000000",
-      "timestamp": 1777761300000
-    }
-  ]
-}
-```
-
-### 8. binance sentiment
-```bash
-methodalgo binance sentiment BTCUSDT.P --period 5m --limit 2 --json
-```
-
-```json
-{
-  "globalRatio": [
-    {
-      "symbol": "BTCUSDT",
-      "longAccount": "0.3749",
-      "longShortRatio": "0.5997",
-      "shortAccount": "0.6251",
-      "timestamp": 1777761300000
-    }
-  ],
-  "topAccount": [],
-  "topPosition": [],
-  "taker": []
-}
-```
-
-### 9. binance basis
-```bash
-methodalgo binance basis BTCUSDT.P --period 5m --limit 2 --json
-```
-
-```json
-[
-  {
-    "indexPrice": "78623.42175000",
-    "contractType": "PERPETUAL",
-    "basisRate": "-0.0004",
-    "futuresPrice": "78589.90",
-    "basis": "-33.52175000",
-    "timestamp": 1777761000000
-  }
-]
-```
-
-### 10. binance raw
-```bash
-methodalgo binance raw /fapi/v1/openInterest -p symbol=BTCUSDT --json
-```
-
-```json
-{
-  "symbol": "BTCUSDT",
-  "openInterest": "102039.216",
-  "time": 1777761857377
-}
-```
-
-> **Safety**: `raw` only permits allowlisted public endpoints that do not require API keys. Account, order, trading, user-data, and signed endpoints are intentionally blocked.
-
----
-
-💡 *Note: All timestamps are in milliseconds or ISO format.*
+For order book, klines, funding, OI, sentiment, basis, exchange-info, and raw endpoint samples, infer from Binance API field names and the command table in `references/command-reference.md`; do not assume a shared wrapper across all subcommands.

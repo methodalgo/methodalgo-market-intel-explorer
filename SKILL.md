@@ -1,7 +1,13 @@
 ---
 name: methodalgo-market-intel-explorer
 version: 1.4.1
-description: Fetches cryptocurrency news, Binance public market data, chart snapshots, economic calendar data, server-side macro/FRED-derived indicators, crypto market totals, and trading signals. Use this skill when the user wants to check the latest crypto news, Binance spot/futures prices, 24h movers, order books, OHLCV klines, futures funding, open interest, long/short ratios, market snapshots, chart screenshots, trading signals, token unlocks, ETF flows, BTC/ETH dominance, total crypto market cap, Fear & Greed, Altseason Index, and macro-economic data (GDP, CPI, Liquidity, etc.).
+description: >
+  Fetch MethodAlgo crypto market intelligence with methodalgo-cli. Use when:
+  checking crypto news, trading signals, token unlocks, ETF flows, chart
+  snapshots, economic calendar events, macro data, BTC/ETH dominance, total
+  crypto market cap, Fear & Greed, Altseason Index, or Binance public
+  spot/futures prices, ticker, movers, order books, trades, klines, funding, OI,
+  long/short sentiment, basis, exchange-info, and allowlisted raw endpoints.
 metadata:
   openclaw:
     requires:
@@ -20,8 +26,8 @@ metadata:
     homepage: https://github.com/methodalgo/methodalgo-market-intel-explorer
 category: data-provider
 credentials:
-  - name: METHODALGO_API_KEY
-    description: API key for the Methodalgo service. Obtain one at https://account.methodalgo.com/account/api-keys
+  METHODALGO_API_KEY:
+    description: API key for the MethodAlgo service. Obtain one at https://account.methodalgo.com/account/api-keys
     required: true
 provenance:
   cli: https://www.npmjs.com/package/methodalgo-cli
@@ -30,547 +36,180 @@ provenance:
   registry: https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer
 ---
 
-# Methodalgo Market Intel Explorer Skill
+# MethodAlgo Market Intel Explorer Skill
 
-## Part 1 — Installing the Skill
+Use this skill as the AI-facing routing layer for `methodalgo-cli`. Keep direct CLI calls in JSON mode unless the user explicitly asks for human-readable output.
 
-Choose one of the following methods to install this skill into your AI agent:
+## Install And Auth
 
-### Option A — ClawHub (Recommended)
-```bash
-clawhub install methodalgo-market-intel-explorer
-```
-> 🔗 [https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer](https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer)
+Install or update the CLI:
 
-### Option B — GitHub Clone
-```bash
-git clone https://github.com/methodalgo/methodalgo-market-intel-explorer.git
-```
-Then point your AI agent (e.g. Claude, Cursor, Antigravity) to the cloned folder and instruct it to read `SKILL.md` to activate.
-
----
-
-## Part 2 — Installing the CLI & Authentication
-
-This skill relies on the `methodalgo-cli`, an **open-source npm package** ([npmjs.com/package/methodalgo-cli](https://www.npmjs.com/package/methodalgo-cli)), to fetch market data.
-
-### 1. Install CLI
 ```bash
 npm install -g methodalgo-cli
+methodalgo --version
 ```
 
-### 2. Authentication
-Most Methodalgo service commands (`news`, `signals`, `snapshot`, `calendar`, and Methodalgo-backed data) require a Methodalgo API key. Binance public market data commands (`methodalgo binance ...`) do not require a Methodalgo API key or a Binance API key.
+Use `methodalgo-cli >= 1.0.36` for `macro` and `totals`; use `>= 1.0.26` for Binance public market data.
 
-The CLI supports two authentication methods. **The CLI will prioritize the environment variable over the local config.**
+Most MethodAlgo service commands require `METHODALGO_API_KEY` or `methodalgo login`:
 
-#### Method A: Environment Variable (Recommended for AI Agents)
-Set the following environment variable in your system or IDE:
-- `METHODALGO_API_KEY`: Your Methodalgo API key.
-
-#### Method B: Local CLI Login (Classic)
-Run the following command and enter your key when prompted:
 ```bash
 methodalgo login
 ```
 
-Apply for a key at: **https://account.methodalgo.com/account/api-keys**
-- The key is stored locally on your machine after login; it is never transmitted outside of Methodalgo's own API.
+Authentication rules:
 
-Verify the installation:
-```bash
-methodalgo --version
-```
+- `news`, `signals`, `snapshot`, `calendar`, `macro`, and `totals` require MethodAlgo service access.
+- `METHODALGO_API_KEY` is required for normal MethodAlgo CLI service usage and login flows.
+- `methodalgo binance ...` uses Binance public endpoints and does not require a MethodAlgo API key or Binance API key.
+- The CLI prioritizes `METHODALGO_API_KEY` over local login config.
 
-### 3. Troubleshooting & Common Errors
-If you encounter errors, check the following:
+Troubleshooting:
 
-| Error Message | Solution |
-|---------------|----------|
-| **Authentication Required** | Run `methodalgo login` or set `METHODALGO_API_KEY` environment variable. |
-| **Command Not Found** | Ensure `methodalgo-cli` is installed: `npm install -g methodalgo-cli`. |
-| **macro/totals command missing** | Update the CLI to `methodalgo-cli` v1.0.36 or newer: `methodalgo update` or reinstall with `npm install -g methodalgo-cli`. |
-| **Binance command missing** | Update the CLI to `methodalgo-cli` v1.0.26 or newer: `methodalgo update` or reinstall with `npm install -g methodalgo-cli`. |
-| **Network Timeout** | Ensure your network can access `methodalgo.com`. |
-| **Outdated Results** | Update the CLI: `methodalgo update`. |
+| Error | Action |
+|---|---|
+| Authentication Required / 401 / 403 | Set `METHODALGO_API_KEY`, run `methodalgo login`, or verify the key at `https://account.methodalgo.com/account/api-keys`. |
+| `methodalgo` not found | Install with `npm install -g methodalgo-cli`. |
+| `macro` / `totals` missing | Update to `methodalgo-cli >= 1.0.36`. |
+| Binance command missing | Update to `methodalgo-cli >= 1.0.26`. |
+| Network timeout / `fred request failed` | Check access to `methodalgo.com`, upstream macro/FRED services, or Binance public API endpoints. |
 
----
+## Reference Loading
 
-## 📚 References (LLM Recommended Reading)
+Load only the reference needed for the task:
 
-To execute tasks more accurately, it is recommended to refer to the following documents before handling complex queries:
+- [references/command-reference.md](./references/command-reference.md): full parameter tables and command catalog for snapshot, news, calendar, macro, totals, and Binance.
+- [references/signal-channels.md](./references/signal-channels.md): channel mechanisms and detailed `details` field meanings.
+- [references/sample-output.md](./references/sample-output.md): compact JSON shapes for parsing and response validation.
+- [references/output-shape-catalog.md](./references/output-shape-catalog.md): field-level output shape catalog for command variants.
+- [references/ai-prompts.md](./references/ai-prompts.md): scenario templates for daily reports, symbol scans, liquidation monitoring, macro analysis, and Binance scans.
 
-- **[Signal Channels Detailed Reference](./references/signal-channels.md)**: Detailed explanation of the trigger mechanisms, timeframes, and `details` field meanings for various signal channels (Breakout, Exhaustion, Golden Pit, etc.).
-- **[AI Prompts Guide](./references/ai-prompts.md)**: Provides prompt templates for scenarios such as "Daily Market Overview" and "Specific Coin Deep Scan".
-- **[Data Output Samples](./references/sample-output.md)**: Shows real JSON response structures for news, signals, snapshot, macro, and Binance public market data commands to facilitate parsing logic.
+## Command Index
 
----
-
-## Usage
-
-Invoke the `methodalgo` CLI directly; **the `--json` flag is mandatory** to obtain structured data:
+Always include `--json` for structured output.
 
 ```bash
-# News
-methodalgo news --type <type> --limit <N> --json
-
-# Signals
+methodalgo news --type <article|breaking|onchain|report> --limit <N> --json
+methodalgo news --type article --search "Bitcoin" --limit 5 --json
 methodalgo signals <channel> --limit <N> --json
-
-# Snapshot
 methodalgo snapshot <symbol> [tf] --url --json
-
-# Calendar
 methodalgo calendar --countries <codes> [options] --json
-
-# Macro data
 methodalgo macro <subcommand> [options] --json
-
-# Crypto market totals
 methodalgo totals [metric] [options] --json
-
-# Binance public market data (no API key required)
 methodalgo binance <subcommand> [options] --json
 ```
 
----
+Core routing:
 
-## 📸 Snapshot Command
+| Intent | Prefer |
+|---|---|
+| Latest market news | `methodalgo news --type breaking --limit 50 --json` |
+| Deep market articles | `methodalgo news --type article --limit 100 --json` |
+| Symbol-specific news | `methodalgo news --type article --search "<symbol or name>" --limit 10 --json` |
+| Trading signals | `methodalgo signals <channel> --limit 10 --json` |
+| Chart image URL | `methodalgo snapshot BTCUSDT.P 60 --url --json` |
+| Economic events | `methodalgo calendar --countries US,EU,CN --json` |
+| Macro dashboard | `methodalgo macro dashboard --json` |
+| Net liquidity | `methodalgo macro liquidity --tail 52 --json` |
+| Crypto-wide totals | `methodalgo totals --json` |
+| BTC dominance / Fear & Greed / Altseason | `methodalgo totals <metric> --history 30d|90d|1y --json` |
+| Binance spot price | `methodalgo binance price BTCUSDT --json` |
+| Binance futures price | `methodalgo binance price BTCUSDT.P --json` |
+| Binance futures funding / OI / sentiment | `methodalgo binance funding BTCUSDT.P --json`; `methodalgo binance oi BTCUSDT.P --period 5m --json`; `methodalgo binance sentiment BTCUSDT.P --period 5m --json` |
 
-```bash
-methodalgo snapshot <symbol> [tf] --url --json
-```
+## Signals Schema Lock
 
-### Parameter Description
+Use `methodalgo signals <channel> --limit <N> --json`.
 
-| Parameter | Description | Example |
-|----------|-------------|---------|
-| `symbol` | Trading pair symbol (Required) | `SOLUSDT` (Spot) / `SOLUSDT.P` (Perpetual) |
-| `tf` | Timeframe (Optional, default: 60) | `15` / `30` / `60` / `240` / `D` / `W` / `M` |
-| `--url` | Forces a URL link to be returned instead of a binary stream | `--url` |
-| `--buffer` | Outputs the raw binary image stream (suitable for direct programmatic processing) | `--buffer` |
-| `--json` | Outputs structured JSON data | `--json` |
+Standard signal channels return an array of message objects. Each message may contain `id`, `timestamp`, `attachments`, `image`, and a nested `signals` array. Each nested signal may contain `title`, `description`, `direction`, and channel-specific `details`. Full examples live in [references/sample-output.md](./references/sample-output.md).
 
-### Output Structure
+Protected `details` field map:
 
-```json
-{
-  "symbol": "SOLUSDT.P",
-  "tf": "60",
-  "url": "https://m.methodalgo.com/tmp/xxx.webp",
-  "timestamp": 1774899516784
-}
-```
+| Channel | Required `details` fields |
+|---|---|
+| `breakout-*` | `Symbol`, `TimeFrame`, `Type` (`UP` / `DOWN`), `BreakPrice`, `Exchange` |
+| `liquidation` | `Symbol`, `Side`, `Quantity`, `Average Price`, `Liquidation Price`, `Position Total` |
+| `exhaustion-*` | `Type`, `Timeframe`, `Exhaustion Side`, `Safety`, `Tip`, `Exchange` |
+| `golden-pit-*` | `Pattern`, `Safety` |
+| `etf-tracker` | `Net Inflow`, `7 Days Avg.` |
+| `market-today` | Variable Discord-style summary fields; do not use it as the structured metric source. |
 
----
+Signal interpretation:
 
-## 📰 News Command
+- `exhaustion-buyer` is bearish buyer exhaustion.
+- `exhaustion-seller` is bullish seller exhaustion.
+- If CLI help text conflicts with these exhaustion directions, follow this Schema Lock.
+- `market-today` is a Discord-style summary stream. For structured BTC Dominance, ETH Dominance, Total Market Cap, Fear & Greed, and Altseason Index values, call `methodalgo totals --json` or `methodalgo totals <metric> --json`.
 
-```bash
-methodalgo news --type <type> --limit <N> --json
-```
+`token-unlock` is the special-case channel: it returns a root object shaped as `{ signals: [...], updatedAt }`, not a root array. Token unlock items include `ts`, `symbol`, `perc`, `progress`, `circSup`, `countDown`, `marketCap`, `unlockToken`, and `unlockTokenVal`. When showing countdowns, calculate live timing from `ts` and `updatedAt` rather than trusting `countDown` as immutable text.
 
-### Available Types
+## Market Data Rules
 
-| Type | Description |
-|------|-------------|
-| `article` | Deep crypto market news and analysis (includes summaries and AI analysis) |
-| `breaking` | Real-time breaking news flashes |
-| `onchain` | Monitoring for on-chain data anomalies |
-| `report` | Institutional research reports |
+News:
 
-### Optional Parameters
+- `article` normally includes richer `excerpt`, `analysis`, and `url`.
+- `breaking`, `onchain`, and `report` can omit article-style fields.
+- For Chinese output, prefer `title.zh`, `excerpt.zh`, and `analysis.zh` when present.
+- News limit can be as high as 500; use 50-100 for broad time coverage.
 
-| Parameter | Description | Example |
-|-----------|-------------|---------|
-| `--type` | News type (Required) | `--type breaking` |
-| `--limit` | Limit on the number of results, up to 500 | `--limit 10` |
-| `--language` | Language `zh` / `en` | `--language zh` |
-| `--search` | Search for keywords in titles | `--search 'Bitcoin'` |
-| `--start-date` | Start date | `--start-date 2026-03-20` |
-| `--end-date` | End date | `--end-date 2026-03-30` |
+Macro:
 
-### Output Structure
+- Use `methodalgo macro ...` for server-side macro/FRED-derived data. The CLI no longer needs a local FRED key.
+- `methodalgo macro liquidity` computes Net Liquidity from Fed Assets - RRP - TGA and is the default liquidity command for BTC macro analysis.
+- Macro commands can still fail on upstream service/network errors such as `fred request failed`; surface the failure instead of fabricating macro values.
+- For subcommand tables and high-alpha series IDs such as `FEDFUNDS`, `WALCL`, `M2SL`, `RRPONTSYD`, `WTREGEN`, `CPIAUCSL`, `DGS10`, `DGS2`, `REAINTRATREARAT10Y`, `DTWEXBGS`, and `VIXCLS`, read [references/command-reference.md](./references/command-reference.md).
 
-```json
-[
-  {
-    "type": "breaking",
-    "title": { "en": "...", "zh": "..." },
-    "excerpt": { "en": "...", "zh": "..." },
-    "description": { "en": "...", "zh": "..." },
-    "analysis": { "en": "...", "zh": "..." },
-    "publish_date": "2026-03-30T19:15:56+00:00",
-    "url": "https://..."
-  }
-]
-```
+Totals:
 
-> The `article` type usually includes `excerpt`, `analysis`, and `url`; `breaking`, `onchain`, and `report` types typically do not have an `excerpt`. It is recommended to fetch a sufficient quantity of news items, such as 50-100, to ensure adequate time coverage.
+- Use `methodalgo totals --json` for crypto-wide structured metrics.
+- Supported metrics include `btc-dominance`, `eth-dominance`, `total-market-cap`, `fear-greed`, and `altseason-index`.
+- Plain `methodalgo totals` shows human CLI help; `methodalgo totals --json` is the AI structured aggregate endpoint.
+- Use `signals market-today` only when the user wants the Discord-style market summary stream.
 
----
+Binance:
 
-## 📡 Signals Command
+- `BTCUSDT` means spot.
+- `BTCUSDT.P` means USD-M perpetual futures; the CLI sends `BTCUSDT` to Binance futures APIs.
+- Use `--market futures` for list-style futures queries such as `movers`.
+- `funding`, `oi`, `sentiment`, and `basis` are futures-only.
+- Binance `--json` often returns direct Binance API shapes; do not assume every subcommand has the same wrapper.
+- `raw` is restricted to allowlisted public endpoints. Account, order, trading, signed, and user-data endpoints are intentionally blocked.
 
-```bash
-methodalgo signals <channel> --limit <N> --json
-```
+## Two-Phase Fetch Strategy
 
-### Channels
+Use a low-cost preview first, then deepen only where the data points:
 
-| Channel | Description | Update Frequency |
-|---------|-------------|------------------|
-| `breakout-htf` | High Timeframe Breakout (1D/3D), 100-candle rolling window | Medium |
-| `breakout-mtf` | Medium Timeframe Breakout (1H/4H), 100-candle rolling window | High |
-| `breakout-24h` | 24-hour rolling window breakout detection | Ultra-high |
-| `liquidation` | Real-time alerts for large liquidation orders | Real-time |
-| `exhaustion-seller` | Seller exhaustion reversal signal (Liquidation Heatmap, inventory <10%/<5%) | Low/Medium |
-| `exhaustion-buyer` | Buyer exhaustion reversal signal (Liquidation Heatmap, inventory <10%/<5%) | Low/Medium |
-| `golden-pit-mtf` | Golden Pit signal (30m/1h/4h) - Bull=recovery after dip, Bear=drop after bounce | Medium |
-| `golden-pit-ltf` | Golden Pit signal (5m/15m) - Bull=recovery after dip, Bear=drop after bounce | High |
-| `token-unlock` | Token unlock events, including unlock time, fundamentals, volume, etc. | Daily |
-| `etf-tracker` | Daily BTC/ETH/SOL/XRP ETF fund inflows and outflows | Daily |
-| `market-today` | Discord-style market summary stream; use `methodalgo totals` for structured metric values | Daily |
+1. Preview: fetch 5-10 items for news, signals, totals, or Binance market data.
+2. Deep dive: use `--after`, `--search`, symbol filtering, or larger limits after identifying relevant IDs, symbols, or themes.
 
-### Standard Output Structure
-**Standard Signal Channels** (breakout / liquidation / exhaustion / golden-pit / etf-tracker / market-today):
-
-```json
-[
-  {
-    "id": "1488261183843864617-0-0",
-    "timestamp": 1774899516784, // Signal transmission timestamp
-    "attachments": [],
-    "image": "https://m.methodalgo.com/tmp/xxx.webp", // Link to chart or data image (optional, may be null)
-    "signals": [
-      {
-        "title": "Signal title display...",
-        "description": "Signal summary content (format varies by channel)...",
-        "direction": "bull/bear/empty string", // Directional hint
-        "details": { 
-          // ⚠️ Field names in the details object vary by channel; see the following enumeration:
-        }
-      }
-    ]
-  }
-]
-```
-
-#### `details` Structure Enumeration for Standard Channels:
-
-1. **`breakout-*` series** (Detecting breakout trading opportunities)
-```json
-{
-  "Symbol": "NIGHTUSDT.P", "TimeFrame": "1h", "Type": "DOWN / UP", 
-  "BreakPrice": "0.04284", "Exchange": "BINANCE"
-}
-```
-2. **`liquidation`** (Detecting large liquidation/blow-off orders)
-```json
-{
-  "Symbol": "ZECUSDT.P", "Side": "🔴 SHORT / 🟢 LONG", "Quantity": "88.245", 
-  "Average Price": "$227.43", "Liquidation Price": "$229.70", "Position Total": "$20069"
-}
-```
-3. **`exhaustion-*` series** (Buyer or seller exhaustion, potential trend reversal)
-```json
-{
-  "Type": "Early Reversal", "Timeframe": "30m", "Exhaustion Side": "SELLER / BUYER", 
-  "Safety": "...", "Tip": "...", "Exchange": "Binance"
-}
-```
-4. **`golden-pit-*` series** (Re-entry opportunities in Smart Cloud patterns)
-```json
-{
-  "Pattern": "Pull then Push", "Safety": "Wait 6-10 bars to develop..."
-}
-```
-5. **`etf-tracker`** (ETF fund flow broadcast)
-```json
-{
-  "Net Inflow": "$0K", "7 Days Avg.": "$663.0K"
-}
-```
-6. **`market-today`** (Discord-style market summary stream)
-```json
-{
-  "summary": "...",
-  "image": "https://m.methodalgo.com/tmp/xxx.webp",
-  "details": { "...": "..." }
-}
-```
-> For structured BTC dominance, ETH dominance, total market cap, Fear & Greed, and Altseason Index values, call `methodalgo totals --json` or a specific `methodalgo totals <metric> --json` command.
-
-#### `token-unlock` Channel Structure
-**`token-unlock` channel** (Unique data structure with a `signals` array at the top level):
-
-```json
-{
-  "signals": [
-    {
-      "ts": 1774915176617, // Unlock time
-      "symbol": "OP", // Token name
-      "perc": 1.52, // Unlock percentage
-      "progress": "40.91%", // Unlock progress
-      "circSup": "6.79 B ICE", // Current circulating supply
-      "countDown": "0Day23Hr30Min", // Countdown relative to updatedAt. Please calculate real-time using the ts and updatedAt in the data.
-      "marketCap": "$218.99 M", // Current market capitalization
-      "unlockToken": "32.21 M", // Number of tokens unlocked
-      "unlockTokenVal": "$3.36 M (1.52% of M.Cap)" // Value of tokens unlocked
-    }
-  ],
-  "updatedAt": 1774915176617 // Data update time
-}
-```
-
----
-
-## 📅 Calendar Command
+Examples:
 
 ```bash
-methodalgo calendar --countries <codes> [options] --json
+methodalgo signals breakout-mtf --limit 5 --json
+methodalgo signals breakout-mtf --limit 100 --after "msgId" --json
+methodalgo news --type article --search "SOL" --limit 10 --json
 ```
 
-### Parameter Description
+## Scenario Shortcuts
 
-| Parameter | Description | Example |
-|-----------|-------------|---------|
-| `--countries` | **(Required)** Comma-separated ISO country codes | `--countries US,EU,CN` |
-| `--from` | Start date (Default: 2 days ago) | `--from 2026-03-20` |
-| `--to` | End date (Default: 2 days later) | `--to 2026-03-30` |
-| `--json` | Outputs structured JSON data | `--json` |
+| Scenario | Commands |
+|---|---|
+| Daily market overview | `totals --json`; `signals etf-tracker`; `news article`; `news breaking`; optionally `signals market-today`. |
+| Specific coin deep scan | Search news, inspect breakout signals, fetch Binance futures price/funding/OI/sentiment, then fetch snapshot. |
+| Liquidation and reversal monitor | `signals liquidation`; `signals exhaustion-buyer`; `signals exhaustion-seller`. |
+| Token unlock check | `signals token-unlock --limit 1 --json`; parse root `signals`. |
+| Macro regime check | `macro dashboard`; `macro recession`; `macro liquidity --tail 52`; optional `macro compare` or `macro zscore`. |
+| Binance microstructure | `binance price`; `binance klines`; `binance funding`; `binance oi`; `binance sentiment`. |
 
-### Output Structure
+## Output Rules
 
-```json
- [
-   {
-     "title": "Non Farm Payrolls",
-     "country": "US",
-     "indicator": "Jobs",
-     "period": "Mar",
-     "comment": "Nonfarm Payrolls measures the change in the number of people employed during the previous month, excluding the farming industry...",
-     "actual": "275K",
-     "forecast": "198K",
-     "previous": "229K",
-     "importance": 1,
-     "date": "2026-04-03T12:30:00.000Z",
-     "source": "Bureau of Labour Statistics",
-     "source_url": "http://www.bls.gov"
-   }
- ]
- ```
+- Parse JSON with structured logic, not string matching.
+- Surface authentication and version errors explicitly.
+- Do not collapse `market-today` and `totals`; they serve different data shapes.
+- Do not normalize away `.P` when presenting user-facing futures symbols.
+- If a task needs exact parameter choices, load [references/command-reference.md](./references/command-reference.md).
+- If a task needs sample JSON, load [references/sample-output.md](./references/sample-output.md).
+- If a task needs field coverage for less common command variants, load [references/output-shape-catalog.md](./references/output-shape-catalog.md).
 
- ---
-
----
-
-## 🏦 Macro Data Command
-
-Access server-side macroeconomic data, FRED-derived indicators, economic calendar data, and market environment series. The CLI no longer needs a local FRED key; Methodalgo handles upstream macro data on the server side.
-
-```bash
-methodalgo macro <subcommand> [options] --json
-```
-
-### Subcommands
-
-| Subcommand | Description | Example |
-|------------|-------------|---------|
-| `environment` | Current market environment data | `methodalgo macro environment --json` |
-| `history <metric>` | Historical market environment series | `methodalgo macro history altcoinSeason --timeframe 90d --json` |
-| `snapshot` | Server-side macro snapshot | `methodalgo macro snapshot --json` |
-| `series <source> <seriesId>` | Macro time series from a source such as FRED | `methodalgo macro series fred DGS10 --timeframe 6m --json` |
-| `calendar` | Server-side economic calendar | `methodalgo macro calendar --countries US --json` |
-| `dashboard` | Full macro overview (Rates, Inflation, Liquidity, Employment, etc.) | `methodalgo macro dashboard --json` |
-| `recession` | Recession indicator scorecard (6 classic signals) | `methodalgo macro recession --json` |
-| `liquidity` | Net liquidity analysis (Fed Assets - RRP - TGA) | `methodalgo macro liquidity --json` |
-| `latest <id>`| Get the latest value for a specific series ID | `methodalgo macro latest FEDFUNDS --json` |
-| `search <q>` | Search for FRED series by keywords | `methodalgo macro search "gold price" --json` |
-| `compare <ids>`| Compare multiple series (comma-separated IDs) | `methodalgo macro compare DGS10,DGS2 --json` |
-| `changes <id>` | Show recent changes and trends for a series | `methodalgo macro changes WALCL --json` |
-| `spread <series1> <series2>`| Compute difference between two series | `methodalgo macro spread T10Y2Y T10Y3M --json` |
-| `zscore <id>` | Z-score and percentile analysis vs historical data | `methodalgo macro zscore CPIAUCSL --lookback 5y --json` |
-
-### 💡 High-Alpha Series IDs for Crypto Traders
-
-| Category | Series ID | Name | Trading Relevance |
-|----------|-----------|------|-----------|
-| **Policy** | `FEDFUNDS` | Fed Funds Rate | Baseline for risk assets discount rate |
-| **Liquidity**| `WALCL` | Fed Total Assets | The "Money Printer" (Direct correlation with BTC) |
-| **Liquidity**| `M2SL` | M2 Money Supply | Global liquidity pool size |
-| **Liquidity**| `RRPONTSYD`| Reverse Repo | Liquidity drain (Higher = Bad for Crypto) |
-| **Liquidity**| `WTREGEN` | Treasury General Account | Gov cash (Lower = More market liquidity) |
-| **Inflation**| `CPIAUCSL` | CPI (All Items) | Inflation core driver for Fed pivots |
-| **Inflation**| `PCEPILFE` | Core PCE | Fed's internal favorite inflation gauge |
-| **Yields** | `DGS10` / `DGS2`| 10Y / 2Y Treasury | Risk-free rate (Higher = Pressure on BTC) |
-| **Real Rate**| `REAINTRATREARAT10Y` | 10Y Real Interest Rate | The true cost of money (Negative = Crypto Moon) |
-| **Currency** | `DTWEXBGS` | Dollar Index (DXY) | Inverse correlation: Strong Dollar = Weak BTC |
-| **Risk** | `VIXCLS` | VIX Fear Index | Market stress indicator |
-
-### 📈 Macro Impact Logic (Quick Guide)
-
-| Indicator | Direction | Typical Impact on Crypto |
-|-----------|-----------|--------------------------|
-| **Interest Rates** (`FEDFUNDS`, `DGS10`) | ⬆️ Increasing | **Bearish** (Higher cost of capital, attracts liquidity to bonds) |
-| **Inflation** (`CPIAUCSL`, `PCEPILFE`) | ⬆️ Above Target | **Bearish** (Forces Fed to keep rates high or hike further) |
-| **Net Liquidity** (`macro liquidity`) | ⬆️ Expanding | **Bullish** (More "excess" cash flowing into risk assets) |
-| **US Dollar** (`DTWEXBGS`) | ⬆️ Strengthening | **Bearish** (Inverse correlation with BTC price) |
-| **Real Rates** (`REAINTRATREARAT10Y`) | ⬇️ Falling/Negative| **Bullish** (Incentivizes holding non-yielding assets like Gold/BTC) |
-
-> **Macro Pro-Tip**: `methodalgo macro liquidity` automatically calculates **Net Liquidity** using `Fed Assets - RRP - TGA`. This is the single most important macro driver for Bitcoin's medium-term price action.
-### Parameters
-
-| Parameter | Description | Example |
-|-----------|-------------|---------|
-| `--tail` | Show only the last N observations where supported; for `liquidity`, `--tail 52` approximates one year of weekly data | `--tail 52` |
-| `--m2` | Include M2 money supply context in liquidity output | `--m2` |
-| `--lookback` | Lookback window for `zscore` analysis | `--lookback 5y` / `24m` / `365d` |
-| `--json` | Outputs structured JSON data | `--json` |
-
----
-
-## 🌐 Crypto Market Totals Command
-
-Access structured crypto market total statistics from CMC-backed Methodalgo data. Use `totals` for crypto-wide statistics; use `signals market-today` only when you need the Discord-style market summary stream.
-
-```bash
-methodalgo totals [metric] [options] --json
-```
-
-### Metrics
-
-| Metric | Description | Example |
-|--------|-------------|---------|
-| `btc-dominance` | BTC dominance | `methodalgo totals btc-dominance --history 90d --json` |
-| `eth-dominance` | ETH dominance | `methodalgo totals eth-dominance --json` |
-| `total-market-cap` | Total crypto market capitalization | `methodalgo totals total-market-cap --json` |
-| `fear-greed` | Fear & Greed Index | `methodalgo totals fear-greed --history 30d --json` |
-| `altseason-index` | Altseason Index | `methodalgo totals altseason-index --history 90d --json` |
-
-Run `methodalgo totals` without a metric to show the available metric help instead of fetching data.
-
-### Parameters
-
-| Parameter | Description | Example |
-|-----------|-------------|---------|
-| `--convert` | Quote currency, default `USD` | `--convert USD` |
-| `--history` | Include history for `30d`, `90d`, or `1y` | `--history 90d` |
-| `--json` | Outputs structured JSON data | `--json` |
-
----
-
-## 🟡 Binance Public Market Data Command
-
-Access Binance spot and USD-M futures public market data through `methodalgo binance`. These commands do **not** require a Binance API key, but they do require `methodalgo-cli` version `1.0.26` or newer.
-
-```bash
-methodalgo binance <subcommand> [options] --json
-```
-
-### Symbol Convention
-
-| Input Symbol | Market | Meaning |
-|--------------|--------|---------|
-| `BTCUSDT` | Spot | Binance spot symbol |
-| `BTCUSDT.P` | USD-M Futures | Binance perpetual futures symbol; the CLI sends `BTCUSDT` to Binance futures APIs |
-
-`--market auto|spot|futures` is available where supported:
-- `auto` uses the `.P` suffix to infer spot vs futures.
-- Explicit `--market spot` or `--market futures` overrides the suffix.
-- List-style commands without a symbol, such as `ticker` and `movers`, default to spot unless `--market futures` is provided.
-
-### Subcommands
-
-| Subcommand | Description | Example |
-|------------|-------------|---------|
-| `price <symbol>` | Latest price, 24h change, high/low, and quote volume | `methodalgo binance price BTCUSDT.P --json` |
-| `ticker [symbol]` | 24h ticker stats for one symbol or high-volume USDT pairs | `methodalgo binance ticker BTCUSDT --json` |
-| `movers` | 24h gainers and losers for spot or futures | `methodalgo binance movers --market futures --limit 10 --json` |
-| `book <symbol>` | Order book depth | `methodalgo binance book ETHUSDT.P --limit 20 --json` |
-| `trades <symbol>` | Recent market trades | `methodalgo binance trades SOLUSDT --limit 20 --json` |
-| `klines <symbol>` | OHLCV candlesticks | `methodalgo binance klines BTCUSDT.P --interval 15m --limit 100 --json` |
-| `funding <symbol>` | USD-M futures funding rate and mark/index price | `methodalgo binance funding BTCUSDT.P --limit 8 --json` |
-| `oi <symbol>` | USD-M futures open interest and recent OI history | `methodalgo binance oi BTCUSDT.P --period 5m --limit 12 --json` |
-| `sentiment <symbol>` | USD-M futures long/short ratios and taker buy/sell ratio | `methodalgo binance sentiment BTCUSDT.P --period 5m --limit 12 --json` |
-| `basis <symbol>` | USD-M futures basis and basis rate | `methodalgo binance basis BTCUSDT.P --period 5m --limit 12 --json` |
-| `exchange-info [symbol]` | Symbol rules and exchange metadata | `methodalgo binance exchange-info BTCUSDT.P --json` |
-| `raw <path>` | Allowlisted public endpoint passthrough | `methodalgo binance raw /fapi/v1/openInterest -p symbol=BTCUSDT --json` |
-
-### Parameters
-
-| Parameter | Description | Example |
-|-----------|-------------|---------|
-| `--market` | `auto`, `spot`, or `futures` where supported | `--market futures` |
-| `--limit` | Number of rows for table views or Binance request limit when supported | `--limit 20` |
-| `--interval` | Kline interval | `--interval 15m` |
-| `--period` | Futures statistics period (`5m`, `15m`, `1h`, `4h`, `1d`, etc.) | `--period 5m` |
-| `--min-volume` | Minimum quote volume for movers filtering | `--min-volume 1000000` |
-| `-p, --param` | Raw endpoint query parameter | `-p symbol=BTCUSDT` |
-| `--json` | Outputs JSON data | `--json` |
-
-### Important Parsing Notes
-
-- `--json` usually returns the direct Binance API response. Do not assume it has the same wrapper shape across subcommands.
-- `ticker --limit` limits the formatted table output; with `--json`, the raw Binance response is returned.
-- `movers` returns a normalized object with `{ market, gainers, losers, timestamp }`, because it is computed by the CLI from Binance 24h ticker data.
-- `funding`, `oi`, `sentiment`, and `basis` are futures-only. `BTCUSDT` and `BTCUSDT.P` both resolve to the same USD-M futures symbol for these commands.
-- `raw` is restricted to allowlisted public endpoints that do not require API keys. Account, order, trading, user-data, and signed endpoints are intentionally blocked.
-
----
-
-## 🎯 Scenario Quick Look
-
-| User Intent | Command |
-|-------------|---------|
-| Check latest news affecting market sentiment | `methodalgo news --type breaking --limit 50 --json` |
-| Check crypto industry news | `methodalgo news --type article --limit 100 --json` |
-| Search news for a specific symbol | `methodalgo news --type article --search 'Bitcoin' --limit 5 --json` |
-| Check breakout signals | `methodalgo signals breakout-mtf --limit 10 --json` |
-| Check token unlocks | `methodalgo signals token-unlock --limit 1 --json` |
-| Check ETF fund flows | `methodalgo signals etf-tracker --limit 10 --json` |
-| Check structured crypto market totals | `methodalgo totals --json` |
-| Check BTC dominance history | `methodalgo totals btc-dominance --history 90d --json` |
-| Check Fear & Greed history | `methodalgo totals fear-greed --history 30d --json` |
-| Check Discord market-today summary | `methodalgo signals market-today --limit 5 --json` |
-| Check liquidation events | `methodalgo signals liquidation --limit 10 --json` |
-| Check Golden Pit signals | `methodalgo signals golden-pit-mtf --limit 10 --json` |
-| Check macroeconomic data (US) | `methodalgo calendar --countries US --json` |
-| Check upcoming macro events | `methodalgo calendar --countries US,EU,CN --from 2026-04-01 --json` |
-| Check global macro dashboard | `methodalgo macro dashboard --json` |
-| Check US recession risk | `methodalgo macro recession --json` |
-| Analyze macro liquidity impact on BTC | `methodalgo macro liquidity --tail 52 --json` |
-| Compare DXY and 10Y Yields | `methodalgo macro compare DTWEXBGS,DGS10 --json` |
-| Analyze Real Interest Rate impact | `methodalgo macro zscore REAINTRATREARAT10Y --json` |
-| Compare 10Y and 3M Treasury (Recession Warning) | `methodalgo macro spread T10Y2Y T10Y3M --json` |
-| Search for specific economic data (e.g. Gold) | `methodalgo macro search 'Gold London Fix' --json` |
-| Get specific macro indicator (e.g. CPI) | `methodalgo macro latest CPIAUCSL --json` |
-| Check Binance spot price and 24h change | `methodalgo binance price BTCUSDT --json` |
-| Check Binance futures price and 24h change | `methodalgo binance price BTCUSDT.P --json` |
-| Compare Binance 24h movers | `methodalgo binance movers --market futures --limit 10 --json` |
-| Fetch Binance futures klines | `methodalgo binance klines BTCUSDT.P --interval 15m --limit 100 --json` |
-| Check Binance futures funding | `methodalgo binance funding BTCUSDT.P --limit 8 --json` |
-| Check Binance futures open interest | `methodalgo binance oi BTCUSDT.P --period 5m --limit 12 --json` |
-| Check Binance futures sentiment | `methodalgo binance sentiment BTCUSDT.P --period 5m --limit 12 --json` |
-| Get chart snapshots | `methodalgo snapshot BTCUSDT.P 60 --url --json` |
-| Incremental fetch for more signals (except token-unlock) | `methodalgo signals <channel> --limit 100 --after "msgId" --json` |
-
----
-
-## Important Notes
-
-1. **Output Format**: Output is **pure JSON**; simply use `JSON.parse`.
-2. **Two-Phase Fetch Strategy**:
-   - Phase 1 (Snapshot): Fetch 5 items to make a preliminary trend assessment.
-   - Phase 2 (Deep Dive): Perform incremental fetches based on specific IDs or keywords (`--after` / `--search`).
-3. **Data Volume Limits**: `--limit` controls the amount of data. News: max 500 items; Signals: max 600 items.
-4. **Language Handling**: For news data, prioritize `title.zh` / `excerpt.zh` / `analysis.zh` fields for Chinese content (if requested).
-5. **Structural Inconsistency Alert**: `token-unlock` returns an object (containing a `signals` array), while other channels return an array. The AI must determine processing logic based on the `channel`.
-6. **Snapshot Screenshots**: `snapshot` returns image links via `--url` by default. Please access the visualized market charts through these links. 
-7. **Authentication Failure**: If Methodalgo service commands fail with 401/403 errors, verify your API key at **https://account.methodalgo.com/account/api-keys** and re-run `methodalgo login`. Binance public data commands do not use this API key.
-8. **Macro Data**: Use `methodalgo macro ...` for macro/FRED-derived data. The CLI no longer requires a local FRED API key.
-9. **Crypto Totals**: Use `methodalgo totals ...` for BTC dominance, ETH dominance, total market cap, Fear & Greed, and Altseason Index. Use `signals market-today` only for the Discord summary stream.
-10. **Binance Public Data**: `methodalgo binance` uses public Binance endpoints and does not require a Binance API key. Use `.P` symbols for futures when available, and use `--market futures` for list-style futures queries.
-
-> Github: https://github.com/methodalgo/methodalgo-market-intel-explorer
-> ClawHub: https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer
+Github: https://github.com/methodalgo/methodalgo-market-intel-explorer
+ClawHub: https://clawhub.ai/methodalgo/methodalgo-market-intel-explorer
